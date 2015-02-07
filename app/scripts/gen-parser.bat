@@ -1,0 +1,1 @@
+pegjs -e "var Parser" fractions-grammar.pegjs fractions-parser.js

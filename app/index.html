@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="Fraction Calculator">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>Fraction Calculator</title>
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+
+  </head>
+  <body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div id="buffer"></div>
+    <div id="parsed"></div>
+
+    <input id="input" type="text" />
+    <div>
+      <div id="output"></div>
+      <div id="decimal"><div>
+    </div>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='//www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      showProcessingMessages: false,
+      messageStyle: "none",
+      skipStartupTypeset: true,
+      showMathMenu: false,
+      showMathMenuMSIE: false
+    });
+    </script>
+    <script type="text/javascript" src="../bower_components/MathJax/MathJax.js?config=AM_HTMLorMML-full"></script>
+    <!-- build:js scripts/vendor.js -->
+    <!-- bower:js -->
+    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js scripts/main.js -->
+    <script type="text/javascript" src="scripts/fractions.js"></script>
+    <script type="text/javascript" src="scripts/fractions-parser.js"></script>
+    <script type="text/javascript" src="scripts/fractions-processor.js"></script>
+    <script type="text/javascript" src="scripts/fractions-controller.js"></script>
+    <!-- endbuild -->
+  </body>
+</html>

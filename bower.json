@@ -1,0 +1,24 @@
+{
+  "name": "fractions",
+  "version": "0.0.1",
+  "authors": [
+    "Rodrigo Jordao <rodrigo.jordao@gmail.com>"
+  ],
+  "description": "A fraction calculator",
+  "keywords": [
+    "fraction",
+    "calculator"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "MathJax": "~2.5.0"
+  }
+}
