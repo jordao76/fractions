@@ -5,9 +5,8 @@
     <meta name="description" content="Fraction Calculator">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <title>Fraction Calculator</title>
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-    <!-- build:css styles/main.css -->
+    <!-- build:css styles/main.min.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
 
@@ -45,16 +44,8 @@
       showMathMenuMSIE: false
     });
     </script>
-
-    <!-- TODO: add to dist, can't use bower wiredep and useref with MathJax -->
     <script type="text/javascript" src="../bower_components/MathJax/MathJax.js?config=AM_HTMLorMML-full"></script>
-    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
 
-    <!-- build:js scripts/main.js -->
-    <script type="text/javascript" src="scripts/fractions.js"></script>
-    <script type="text/javascript" src="scripts/fractions-parser.js"></script>
-    <script type="text/javascript" src="scripts/fractions-processor.js"></script>
-    <script type="text/javascript" src="scripts/fractions-controller.js"></script>
-    <!-- endbuild -->
+    <script type="text/javascript" src="scripts/main.min.js"></script>
   </body>
 </html>

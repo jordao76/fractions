@@ -1,5 +1,4 @@
-/* jshint devel:true */
-var Processor = (function(fraction, parser){
+module.exports = (function(fraction, parser){
 'use strict';
 
 var parse = function(exp) {
@@ -95,4 +94,4 @@ return {
   render : render
 };
 
-}(Fraction, Parser));
+}(require('./fractions'), require('./fractions-parser')));

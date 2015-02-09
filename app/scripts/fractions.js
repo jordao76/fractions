@@ -1,5 +1,4 @@
-/* jshint devel:true */
-var Fraction = (function(){
+module.exports = (function(){
 'use strict';
 
 // fractions are represented as an array of 2 elements, e.g. 1/3 is [1,3]
