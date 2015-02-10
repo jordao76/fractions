@@ -2,13 +2,6 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
-gulp.task('jshint', function() {
-  return gulp.src(['app/scripts/**/*.js', '!app/scripts/fractions-parser.js'])
-    .pipe($.jshint())
-    .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.jshint.reporter('fail'));
-});
-
 gulp.task('lint', function () {
   return gulp.src(['app/scripts/**/*.js', '!app/scripts/fractions-parser.js'])
     .pipe($.eslint({
@@ -70,7 +63,7 @@ gulp.task('extras', function() {
 
 gulp.task('clean', require('del').bind(null, 'dist'));
 
-gulp.task('build', [/*'jshint',*/ 'scripts', 'html', 'extras'], function() {
+gulp.task('build', [/*'lint',*/ 'scripts', 'html', 'extras'], function() {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true})); // TODO: MathJax!
 });
 
