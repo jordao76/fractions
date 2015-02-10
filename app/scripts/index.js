@@ -1,4 +1,4 @@
-/* global MathJax,require */
+/* global MathJax,require,jQuery */
 (function(MathJax, $, Processor){
 'use strict';
 
@@ -23,13 +23,7 @@ $(function(){
   };
 
   var output = function(s) {
-    if (window.MathJax) {
-      typeset(s);
-    }
-    else {
-      $parsed.text(s);
-      $output.text(s);
-    }
+    typeset(s);
   };
 
   var last = null;
@@ -46,9 +40,8 @@ $(function(){
       var result = Processor.calc(ast);
       output(Processor.render(ast, result));
       if (!result.error) {
-        $decimal.text(window.eval(result));
-        $input.val(result);
-        last = result;
+        $decimal.text(result.toFloat());
+        $input.val(last = result.toString());
       }
     }
     else if (exp !== last) {

@@ -17,6 +17,7 @@
     "del": "^0.1.0",
     "gulp": "^3.8.10",
     "gulp-csso": "^0.2.6",
+    "gulp-eslint": "^0.4.1",
     "gulp-if": "^1.2.1",
     "gulp-jshint": "^1.5.3",
     "gulp-livereload": "^2.0.0",

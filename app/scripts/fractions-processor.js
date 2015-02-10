@@ -48,7 +48,7 @@ var calc = function(ast) {
         // do pair-wise association, e.g. "1 / 2 / 3 / 4 / 5" => "(1 / 2) / (3 / 4) / 5"
         var pairs = a.map(recur).reduce(
           function(p,e){
-            var last = p[p.length-1]; 
+            var last = p[p.length-1];
             if (last.length < 2) { last.push(e); } else { p.push([e]); }
             return p;
           },[[]]
@@ -58,7 +58,7 @@ var calc = function(ast) {
           reduce(function(p,e){return f.div(p,e);});
       },
       exp:function(e,recur){return recur(e);},
-      post:function(r){return f.toString(r);}
+      post:function(r){return r;}
     });
   } catch(e) {
     return { error: e.message };

@@ -3,16 +3,34 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
 gulp.task('jshint', function() {
-  return gulp.src('app/scripts/**/*.js')
+  return gulp.src(['app/scripts/**/*.js', '!app/scripts/fractions-parser.js'])
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
     .pipe($.jshint.reporter('fail'));
 });
 
+gulp.task('lint', function () {
+  return gulp.src(['app/scripts/**/*.js', '!app/scripts/fractions-parser.js'])
+    .pipe($.eslint({
+      rules: {
+        'quotes': 0,
+        'space-infix-ops': 0,
+        'comma-spacing': 0,
+        'key-spacing': 0,
+        'no-return-assign': 0,
+        'curly': 0,
+        'new-cap': 0
+      },
+      envs: ['browser']
+    }))
+    .pipe($.eslint.format())
+    .pipe($.eslint.failOnError());
+});
+
 gulp.task('peg', function() {
   return gulp.src('app/scripts/*.pegjs')
     .pipe($.peg().on("error", console.error))
-    .pipe(gulp.dest('app/scripts')); // TODO: on dist or .tmp?
+    .pipe(gulp.dest('app/scripts'));
 });
 
 // TODO: copy MathJax! jQuery?

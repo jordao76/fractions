@@ -14,9 +14,16 @@ var gcd = function(n, d) {
   return n;
 };
 
-var simple = function(f) {
+var fraction = function(f) {
   var d = gcd(f[0], f[1]);
-  return [f[0]/d, f[1]/d];
+  var result = [f[0]/d, f[1]/d];
+  result.toFloat = function() {
+    return this[0]/this[1];
+  };
+  result.toString = function() {
+    return this[1]===1?(''+this[0]):(this[0]+'/'+this[1]);
+  };
+  return result;
 };
 
 var div0 = new Error('Division by zero!');
@@ -24,30 +31,24 @@ var div0 = new Error('Division by zero!');
 return {
   create: function(n, d) {
     if (d===0) throw div0;
-    return simple([n, d||1]);
+    return fraction([n, d||1]);
   },
   add: function(l, r) {
     var a=l[0],b=l[1],c=r[0],d=r[1];
-    return simple([a*d + c*b, b*d]);
+    return fraction([a*d + c*b, b*d]);
   },
   minus: function(f) {
     var n=f[0],d=f[1];
-    return simple([-n, d]);
+    return fraction([-n, d]);
   },
   mul: function(l, r) {
     var a=l[0],b=l[1],c=r[0],d=r[1];
-    return simple([a*c, b*d]);
+    return fraction([a*c, b*d]);
   },
   div: function(l, r) {
     var a=l[0],b=l[1],c=r[0],d=r[1];
     if (c===0) throw div0;
-    return simple([a*d, b*c]);
-  },
-  toFloat: function(f) {
-    return f[0]/f[1];
-  },
-  toString: function(f) {
-    return f[1]===1?(''+f[0]):(f[0]+'/'+f[1]);
+    return fraction([a*d, b*c]);
   }
 };
 
