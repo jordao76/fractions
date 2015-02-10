@@ -1,3 +1,4 @@
+/* global module,require */
 module.exports = (function(fraction, parser){
 'use strict';
 
@@ -13,7 +14,7 @@ var parse = function(exp) {
     // balance close parenthesis
     var openParens = (newExp.match(/\(/g)||{length:0}).length;
     var closeParens = (newExp.match(/\)/g)||{length:0}).length;
-    while (openParens-- > closeParens) { newExp += ")"; }
+    while (openParens-- > closeParens) { newExp += ')'; }
 
     if (exp !== newExp) {
       return parse(newExp);
@@ -36,9 +37,9 @@ var calc = function(ast) {
   try {
     var f = fraction;
     return interpret(ast, {
-      nil:function(){return ''},
-      error:function(){return ''},
-      num:function(n){return f.create(n)},
+      nil:function(){return '';},
+      error:function(){return '';},
+      num:function(n){return f.create(n);},
       add:function(a,recur){return a.map(recur).reduce(function(p,e){return f.add(p,e);});},
       minus:function(e,recur){return f.minus(recur(e));},
       mul:function(a,recur){return a.map(recur).reduce(function(p,e){return f.mul(p,e);});},
@@ -48,7 +49,7 @@ var calc = function(ast) {
         var pairs = a.map(recur).reduce(
           function(p,e){
             var last = p[p.length-1]; 
-            if (last.length < 2) last.push(e); else p.push([e]);
+            if (last.length < 2) { last.push(e); } else { p.push([e]); }
             return p;
           },[[]]
         );
@@ -67,18 +68,18 @@ var calc = function(ast) {
 // render AST as AsciiMath
 var render = function(ast, result) {
   var rendered = interpret(ast, {
-    nil:function(){return ''},
-    error:function(err){return 'bb"Error"'},
-    num:function(n){return ''+n},
-    add:function(a,recur){return a.map(recur).reduce(function(p,e){return p+"+"+e;});},
-    minus:function(e,recur){return "-"+recur(e);},
-    mul:function(a,recur){return a.map(recur).reduce(function(p,e){return p+"xx"+e;});},
+    nil:function(){return '';},
+    error:function(){return 'bb"Error"';},
+    num:function(n){return ''+n;},
+    add:function(a,recur){return a.map(recur).reduce(function(p,e){return p+'+'+e;});},
+    minus:function(e,recur){return '-'+recur(e);},
+    mul:function(a,recur){return a.map(recur).reduce(function(p,e){return p+'xx'+e;});},
     over:function(a,recur){
       // do pair-wise association, e.g. "1 / 2 / 3 / 4 / 5" => "(1 / 2) -: (3 / 4) -: 5"
-      var curr = '', op = function(){return curr=curr==='/'?'-:':'/';};
+      var curr = '', op = function(){return curr=(curr==='/'?'-:':'/');};
       return a.map(recur).reduce(function(p,e){return p+op()+e;});
     },
-    exp:function(e,recur){return "("+recur(e)+")";},
+    exp:function(e,recur){return '('+recur(e)+')';},
     post:function(s){return s.replace(/\+-/g,'-').replace(/--/g,'+');}
   });
   if (result) {

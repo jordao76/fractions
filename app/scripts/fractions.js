@@ -1,3 +1,4 @@
+/* global module */
 module.exports = (function(){
 'use strict';
 
@@ -5,7 +6,7 @@ module.exports = (function(){
 
 var gcd = function(n, d) {
   var remainder = 0;
-  while (d != 0) {
+  while (d !== 0) {
     remainder = n % d;
     n = d;
     d = remainder;
@@ -42,8 +43,11 @@ return {
     if (c===0) throw div0;
     return simple([a*d, b*c]);
   },
+  toFloat: function(f) {
+    return f[0]/f[1];
+  },
   toString: function(f) {
-    return f[1]===1?(''+f[0]):(f[0]+"/"+f[1]);
+    return f[1]===1?(''+f[0]):(f[0]+'/'+f[1]);
   }
 };
 

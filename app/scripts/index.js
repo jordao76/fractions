@@ -1,3 +1,4 @@
+/* global MathJax,require */
 (function(MathJax, $, Processor){
 'use strict';
 
@@ -12,7 +13,7 @@ $(function(){
   var typeset = function(s) {
     MathJax.Hub.Queue(function(){
       $parsed.text(s);
-      $buffer.text("`" + s + "`");
+      $buffer.text('`' + s + '`');
       MathJax.Hub.Typeset($buffer.get(), function() {
         if ($parsed.text() === s) {
           $output.html($buffer.html());
@@ -62,4 +63,4 @@ $(function(){
 
 });
 
-}(MathJax, require('jquery'), require('./fractions-processor'))); // TODO: use jQuery through bower!
+}(MathJax, jQuery, require('./fractions-processor')));
