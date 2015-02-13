@@ -1,6 +1,7 @@
 {
-  window.partial = null;
-  function p(o){return window.partial=o;}
+  // TODO: partial parsing!
+  var partial = null;
+  function p(o){return partial=o;}
 
   function num(n){return p({type:'num',arg:n});}
   function add(a){return p({type:'add',arg:a});}

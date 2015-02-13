@@ -12,8 +12,8 @@ var parse = function(exp) {
     var newExp = exp.replace(/\D+$/, '');
 
     // balance close parenthesis
-    var openParens = (newExp.match(/\(/g)||{length:0}).length;
-    var closeParens = (newExp.match(/\)/g)||{length:0}).length;
+    var openParens = (newExp.match(/\(/g)||[]).length;
+    var closeParens = (newExp.match(/\)/g)||[]).length;
     while (openParens-- > closeParens) { newExp += ')'; }
 
     if (exp !== newExp) {

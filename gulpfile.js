@@ -61,6 +61,11 @@ gulp.task('extras', function() {
   ]).pipe(gulp.dest('dist'));
 });
 
+gulp.task('test', ['peg'], function() {
+  gulp.src('app/specs/**.js')
+    .pipe($.jasmine());
+});
+
 gulp.task('clean', require('del').bind(null, 'dist'));
 
 gulp.task('build', [/*'lint',*/ 'scripts', 'html', 'extras'], function() {
