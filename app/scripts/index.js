@@ -53,7 +53,7 @@ $(function(){
       $input.val(last = result.toString());
     }
   };
-  
+
   $input.keyup(function(e){if(e.which===13)calc();}); // 13 is <ENTER>
   $input.on('input propertychange', process);
   $input.focus();

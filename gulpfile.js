@@ -43,6 +43,12 @@ gulp.task('scripts', ['peg'], function() {
     .pipe(gulp.dest('dist/scripts'));
 });
 
+gulp.task('images', function() { // TODO: optimize images
+  return gulp.src([
+    'app/images/*.*'
+  ]).pipe(gulp.dest('dist/images'));
+});
+
 gulp.task('html', function() {
   var assets = $.useref.assets({searchPath: 'app'});
   return gulp.src('app/*.html')
@@ -68,7 +74,7 @@ gulp.task('test', ['peg'], function() {
 
 gulp.task('clean', require('del').bind(null, 'dist'));
 
-gulp.task('build', [/*'lint',*/ 'scripts', 'html', 'extras'], function() {
+gulp.task('build', [/*'lint',*/ 'scripts', 'images', 'html', 'extras'], function() {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true})); // TODO: MathJax!
 });
 
