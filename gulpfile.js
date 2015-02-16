@@ -3,7 +3,7 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
 gulp.task('lint', function () {
-  return gulp.src(['app/scripts/**/*.js', '!app/scripts/fractions-parser.js'])
+  return gulp.src(['app/scripts/**/*.js', '!app/scripts/fractions-peg-parser.js'])
     .pipe($.eslint({
       rules: {
         'quotes': 0,

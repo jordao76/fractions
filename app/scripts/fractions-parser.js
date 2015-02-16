@@ -95,4 +95,4 @@ return {
   render : render
 };
 
-}(require('./fractions'), require('./fractions-parser')));
+}(require('./fractions'), require('./fractions-peg-parser')));
