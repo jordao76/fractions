@@ -34,9 +34,9 @@ $(function(){
   var process = function() {
     var exp = $input.val();
     if (!exp.trim()) return butFirstClear();
-    var ast = Parser.parse(exp);
     if (exp !== last) {
-      output(Parser.render(ast));
+      var parsed = Parser.parse(exp);
+      output(parsed.render());
       $decimal.text('');
       last = exp;
     }
@@ -45,9 +45,9 @@ $(function(){
   var calc = function() {
     var exp = $input.val();
     if (!exp.trim()) return butFirstClear();
-    var ast = Parser.parse(exp);
-    var result = Parser.calc(ast);
-    output(Parser.render(ast, result));
+    var parsed = Parser.parse(exp);
+    var result = parsed.calc();
+    output(parsed.render(result));
     if (!result.error) {
       $decimal.text(result.toFloat());
       $input.val(last = result.toString());

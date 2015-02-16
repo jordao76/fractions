@@ -89,10 +89,16 @@ var render = function(ast, result) {
   return rendered;
 };
 
+var Parsed = function(ast){
+  this.ast = ast;
+};
+Parsed.prototype = {
+  calc: function(){return calc(this.ast);},
+  render: function(result){return render(this.ast, result);}
+};
+
 return {
-  parse : parse,
-  calc : calc,
-  render : render
+  parse: function(e){return new Parsed(parse(e));}
 };
 
 }(require('./fractions'), require('./fractions-peg-parser')));

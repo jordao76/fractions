@@ -2,7 +2,7 @@ var Parser = require('../scripts/fractions-parser');
 
 describe("Parser:", function() {
 
-  var p = function(e){return Parser.parse(e)};
+  var p = function(e){return Parser.parse(e).ast};
 
   it("can parse singleton expressions", function() {
     expect(p('2')).toEqual({ type: 'num', arg: 2 });
