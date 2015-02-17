@@ -43,7 +43,25 @@ describe("Parser:", function() {
     });
   });
 
-  // TODO: precedence rules
+  it("multiplication has preference over sum", function() {
+    expect(p('2+3*4')).toEqual({
+      type: 'add',
+      arg: [
+        { type: 'num', arg: 2 },
+        { type: 'mul', arg: [ { type: 'num', arg: 3 }, { type: 'num', arg: 4 } ] }
+      ]
+    });
+  });
+
+  it("fraction has preference over multiplication", function() {
+    expect(p('2*3/4')).toEqual({
+      type: 'mul',
+      arg: [
+        { type: 'num', arg: 2 },
+        { type: 'over', arg: [ { type: 'num', arg: 3 }, { type: 'num', arg: 4 } ] }
+      ]
+    });
+  });
 
   // TODO: failure scenarios, partial parsing
 
