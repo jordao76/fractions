@@ -2,14 +2,42 @@
 module.exports = (function(fraction, parser){
 'use strict';
 
-var parse = function(exp) {
+var parse = function(exp, error) {
   try {
-    return parser.parse(exp);
+    var ast = parser.parse(exp);
+    if (error && error.missingNumber) {
+      // replace last number with a 'missing' type
+      var recur = function(o){
+        if (o.arg) {
+          if (o.arg.length) {
+            return recur(o.arg[o.arg.length-1]);
+          }
+          else if (o.type !== 'num') {
+            return recur(o.arg);
+          }
+        }
+        return o;
+      };
+      var last = recur(ast);
+      if (last.arg === -1) {
+        last.type = 'minus';
+        last.arg = { type: 'missing' };
+      }
+      else {
+        last.type = 'missing';
+        delete last.arg;
+      }
+    }
+    return ast;
   } catch(e) {
     // try to create a valid expression
+    var newExp = exp;
 
-    // trim trailing non-numbers
-    var newExp = exp.replace(/\D+$/, '');
+    // if it ends with a non-number, see if adding a number works
+    if (newExp.match(/\D+$/)) {
+      newExp += '1';
+      e.missingNumber = true;
+    }
 
     // balance close parenthesis
     var openParens = (newExp.match(/\(/g)||[]).length;
@@ -17,11 +45,9 @@ var parse = function(exp) {
     while (openParens-- > closeParens) { newExp += ')'; }
 
     if (exp !== newExp) {
-      return parse(newExp);
+      return parse(newExp, e);
     }
-    else {
-      return window.partial || { error:e.message };
-    }
+    return { error:e.message };
   }
 };
 
@@ -37,6 +63,7 @@ var calc = function(ast) {
   try {
     var f = fraction;
     return interpret(ast, {
+      missing:function(){throw new Error('incomplete expression');}, // TODO: put string in a variable!
       nil:function(){return '';},
       error:function(){return '';},
       num:function(n){return f.create(n);},
@@ -66,8 +93,10 @@ var calc = function(ast) {
 };
 
 // render AST as AsciiMath
+var placeholder = '';
 var render = function(ast, result) {
   var rendered = interpret(ast, {
+    missing:function(){return placeholder;},
     nil:function(){return '';},
     error:function(){return 'bb"Error"';},
     num:function(n){return ''+n;},
@@ -98,7 +127,8 @@ Parsed.prototype = {
 };
 
 return {
-  parse: function(e){return new Parsed(parse(e));}
+  parse: function(e){return new Parsed(parse(e));},
+  placeholder: placeholder // TODO: rename?
 };
 
 }(require('./fractions'), require('./fractions-peg-parser')));

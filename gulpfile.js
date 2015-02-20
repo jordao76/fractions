@@ -74,8 +74,8 @@ gulp.task('test', ['peg'], function() {
 
 gulp.task('clean', require('del').bind(null, 'dist'));
 
-gulp.task('build', [/*'lint',*/ 'scripts', 'images', 'html', 'extras'], function() {
-  return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true})); // TODO: MathJax!
+gulp.task('build', ['lint', 'test', 'scripts', 'images', 'html', 'extras'], function() {
+  return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 
 gulp.task('default', ['clean'], function() {

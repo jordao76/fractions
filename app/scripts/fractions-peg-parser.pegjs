@@ -1,13 +1,9 @@
 {
-  // TODO: partial parsing!
-  var partial = null;
-  function p(o){return partial=o;}
-
-  function num(n){return p({type:'num',arg:n});}
-  function add(a){return p({type:'add',arg:a});}
-  function mul(a){return p({type:'mul',arg:a});}
-  function over(a){return p({type:'over',arg:a});}
-  function exp(e){return p({type:'exp',arg:e});}
+  function num(n){return {type:'num',arg:n};}
+  function add(a){return {type:'add',arg:a};}
+  function mul(a){return {type:'mul',arg:a};}
+  function over(a){return {type:'over',arg:a};}
+  function exp(e){return {type:'exp',arg:e};}
 
   function minus(e){return {type:"minus",arg:e};}
 
