@@ -2,6 +2,12 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
+gulp.task('peg', function() {
+  return gulp.src('app/scripts/fractions-peg-parser.pegjs')
+    .pipe($.peg().on("error", console.error))
+    .pipe(gulp.dest('app/scripts'));
+});
+
 gulp.task('lint', function () {
   return gulp.src(['app/scripts/**/*.js', '!app/scripts/fractions-peg-parser.js'])
     .pipe($.eslint({
@@ -20,13 +26,10 @@ gulp.task('lint', function () {
     .pipe($.eslint.failOnError());
 });
 
-gulp.task('peg', function() {
-  return gulp.src('app/scripts/*.pegjs')
-    .pipe($.peg().on("error", console.error))
-    .pipe(gulp.dest('app/scripts'));
+gulp.task('test', ['peg'], function() {
+  gulp.src('app/specs/**.js')
+    .pipe($.jasmine());
 });
-
-// TODO: copy MathJax! jQuery?
 
 gulp.task('scripts', ['peg'], function() {
   var browserify = require('browserify');
@@ -43,7 +46,7 @@ gulp.task('scripts', ['peg'], function() {
     .pipe(gulp.dest('dist/scripts'));
 });
 
-gulp.task('images', function() { // TODO: optimize images
+gulp.task('images', function() {
   return gulp.src([
     'app/images/*.*'
   ]).pipe(gulp.dest('dist/images'));
@@ -67,20 +70,17 @@ gulp.task('extras', function() {
   ]).pipe(gulp.dest('dist'));
 });
 
-gulp.task('test', ['peg'], function() {
-  gulp.src('app/specs/**.js')
-    .pipe($.jasmine());
-});
-
-gulp.task('clean', require('del').bind(null, 'dist'));
-
 gulp.task('build', ['lint', 'test', 'scripts', 'images', 'html', 'extras'], function() {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 
+gulp.task('clean', require('del').bind(null, ['dist', 'app/scripts/fractions-peg-parser.js']));
+
 gulp.task('default', ['clean'], function() {
   gulp.start('build');
 });
+
+// serve
 
 gulp.task('connect', function() {
   var serveStatic = require('serve-static');
