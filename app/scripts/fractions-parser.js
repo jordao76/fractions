@@ -2,53 +2,63 @@
 module.exports = (function(fraction, parser){
 'use strict';
 
-var parse = function(exp, error) {
+var addMissingType = function(ast) {
+  // replace last number with a 'missing' type
+  var recur = function(o){
+    if (o.arg) {
+      if (o.arg.length) {
+        return recur(o.arg[o.arg.length-1]);
+      }
+      else if (o.type !== 'num') {
+        return recur(o.arg);
+      }
+    }
+    return o;
+  };
+  var last = recur(ast);
+  if (last.arg === -1) {
+    last.type = 'minus';
+    last.arg = { type: 'missing' };
+  }
+  else {
+    last.type = 'missing';
+    delete last.arg;
+  }
+};
+
+var parse = function(exp, aNumberWasAdded) {
   try {
     var ast = parser.parse(exp);
-    if (error && error.missingNumber) {
-      // replace last number with a 'missing' type
-      var recur = function(o){
-        if (o.arg) {
-          if (o.arg.length) {
-            return recur(o.arg[o.arg.length-1]);
-          }
-          else if (o.type !== 'num') {
-            return recur(o.arg);
-          }
-        }
-        return o;
-      };
-      var last = recur(ast);
-      if (last.arg === -1) {
-        last.type = 'minus';
-        last.arg = { type: 'missing' };
-      }
-      else {
-        last.type = 'missing';
-        delete last.arg;
-      }
+    if (aNumberWasAdded) {
+      addMissingType(ast);
     }
     return ast;
-  } catch(e) {
-    // try to create a valid expression
-    var newExp = exp;
-
-    // if it ends with a non-number, see if adding a number works
-    if (newExp.match(/\D+$/)) {
-      newExp += '1';
-      e.missingNumber = true;
-    }
-
-    // balance close parenthesis
-    var openParens = (newExp.match(/\(/g)||[]).length;
-    var closeParens = (newExp.match(/\)/g)||[]).length;
-    while (openParens-- > closeParens) { newExp += ')'; }
-
-    if (exp !== newExp) {
-      return parse(newExp, e);
-    }
-    return { error:e.message };
+  } catch(error) {
+    return tryParseExpressionWithError(exp, error);
   }
+};
+
+var tryParseExpressionWithError = function(exp, error) {
+  // try to create a valid expression
+  var newExp = exp, aNumberWasAdded = false;
+
+  // if it ends with a non-number, see if adding a number works
+  if (newExp.match(/\D+$/)) {
+    newExp += '1';
+    aNumberWasAdded = true;
+  }
+
+  // balance close parenthesis
+  var openParens = (newExp.match(/\(/g)||[]).length;
+  var closeParens = (newExp.match(/\)/g)||[]).length;
+  while (openParens-- > closeParens) { newExp += ')'; }
+
+  if (exp !== newExp) {
+    return parse(newExp, aNumberWasAdded);
+  }
+
+  // couldn't "fix" the expression
+  return { error: error.message };
 };
 
 var interpret = function(ast, interpreter) {
