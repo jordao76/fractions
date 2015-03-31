@@ -22,7 +22,7 @@ gulp.task 'lint', ->
     .pipe $.eslint.failOnError()
 
 gulp.task 'test', ['peg'], ->
-  gulp.src 'app/specs/**.js'
+  gulp.src 'app/specs/**.coffee'
     .pipe $.jasmine()
 
 gulp.task 'scripts', ['peg'], ->
