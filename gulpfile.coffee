@@ -2,24 +2,14 @@ gulp = require 'gulp'
 $ = (require 'gulp-load-plugins')()
 
 gulp.task 'peg', ->
-  gulp.src 'app/scripts/fractions-peg-parser.pegjs'
-    .pipe $.peg().on "error", console.error
+  gulp.src 'app/scripts/fractions-peg-parser.peg'
+    .pipe $.peg().on 'error', console.error
     .pipe gulp.dest 'app/scripts'
 
 gulp.task 'lint', ->
-  gulp.src ['app/scripts/**/*.js', '!app/scripts/fractions-peg-parser.js']
-    .pipe $.eslint
-      rules:
-        'quotes': 0
-        'space-infix-ops': 0
-        'comma-spacing': 0
-        'key-spacing': 0
-        'no-return-assign': 0
-        'curly': 0
-        'new-cap': 0
-      envs: ['browser']
-    .pipe $.eslint.format()
-    .pipe $.eslint.failOnError()
+  gulp.src 'app/scripts/**/*.coffee'
+    .pipe $.coffeelint()
+    .pipe $.coffeelint.reporter()
 
 gulp.task 'test', ['peg'], ->
   gulp.src 'app/specs/**.coffee'
@@ -29,28 +19,30 @@ gulp.task 'scripts', ['peg'], ->
   browserify = require 'browserify'
   source = require 'vinyl-source-stream'
   buffer = require 'vinyl-buffer'
+  coffeeify = require 'coffeeify'
 
-  browserify {entries: ['./app/scripts/index.js'], baseDir: './app/scripts'}
+  browserify {entries: ['./app/scripts/index.coffee'], extensions: ['.coffee'], debug: true}
+    .transform(coffeeify)
     .bundle()
     .pipe source 'main.min.js'
     .pipe buffer()
-    .pipe $.sourcemaps.init {loadMaps: true}
+    .pipe $.sourcemaps.init loadMaps: true
     .pipe $.uglify()
     .pipe $.sourcemaps.write './'
     .pipe gulp.dest 'dist/scripts'
 
 gulp.task 'images', ->
-  gulp.src ['app/images/*.*']
+  gulp.src 'app/images/*.*'
     .pipe gulp.dest 'dist/images'
 
 gulp.task 'html', ->
-  assets = $.useref.assets {searchPath: 'app'}
+  assets = $.useref.assets searchPath: 'app'
   gulp.src 'app/*.html'
     .pipe assets
     .pipe $.if '*.css', $.csso()
     .pipe assets.restore()
     .pipe $.useref()
-    .pipe $.if '*.html', $.minifyHtml {conditionals: true}
+    .pipe $.if '*.html', $.minifyHtml conditionals: true
     .pipe gulp.dest 'dist'
 
 gulp.task 'extras', ->
@@ -63,7 +55,7 @@ gulp.task 'build', ['lint', 'test', 'scripts', 'images', 'html', 'extras'], ->
 
 gulp.task 'clean', 
   require 'del'
-    .bind null, ['dist', 'app/scripts/fractions-peg-parser.js']
+    .bind null, ['dist', 'app/scripts/*.js']
 
 gulp.task 'default', ['clean'], ->
   gulp.start 'build'

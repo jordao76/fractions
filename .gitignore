@@ -1,5 +1,4 @@
 node_modules
 dist
 bower_components
-app/scripts/fractions-peg-parser.js
-npp-workspace.css
+app/scripts/*.js
