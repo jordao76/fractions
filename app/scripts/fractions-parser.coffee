@@ -52,8 +52,8 @@ tryParseExpressionWithError = (exp, error) ->
   { error: error.message }
 
 interpret = (ast, interpreter) ->
-  return interpreter.nil() if !ast
-  return interpreter.error ast.error if ast.error
+  return interpreter.nil() if !ast?
+  return interpreter.error ast.error if ast.error?
   recur = (o) -> interpreter[o.type] o.arg, recur
   interpreter.post recur ast
 
