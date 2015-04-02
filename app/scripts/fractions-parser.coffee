@@ -23,6 +23,7 @@ addMissingType = (ast) ->
     delete last.arg
 
 parse = (exp, aNumberWasAdded) ->
+  exp = exp.trim()
   try
     ast = parser.parse(exp)
     addMissingType ast if aNumberWasAdded

@@ -30,6 +30,14 @@ describe "Parser:", ->
         type: 'over'
         arg: [{ type: 'num', arg: 1 }, { type: 'num', arg: 0 }]
 
+    it "can parse with spaces", ->
+      expect(parse ' 2 * 3 ').toEqual
+        type: 'mul'
+        arg: [{ type: 'num', arg: 2 }, { type: 'num', arg: 3 }]
+      expect(parse '\t2\n\t  +\n\t3 ').toEqual
+        type: 'add'
+        arg: [{ type: 'num', arg: 2 }, { type: 'num', arg: 3 }]
+
     it "can parse sub-expressions", ->
       expect(parse '2*(3+4)').toEqual
         type: 'mul'

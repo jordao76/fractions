@@ -7,30 +7,37 @@
 
   function minus(e){return {type:"minus",arg:e};}
 
-  function terms(a){return a.map(function(e){return e[0]==="-"?minus(e[1]):e[1];});}
+  function terms(a) {
+    return a.map(function(e) {
+      return e[0] === "-" ? minus(e[2]) : e[2];
+    });
+  }
 }
 
 S
   = E
 
 E "expression"
-  = left:T right:(("+"/"-") T)+ { return add([left].concat(terms(right))); }
+  = left:T _ right:(("+"/"-") _ T)+ { return add([left].concat(terms(right))); }
   / T
 
 T "term"
-  = left:F right:("*" F)+ { return mul([left].concat(terms(right))); }
+  = left:F _ right:("*" _ F)+ { return mul([left].concat(terms(right))); }
   / F
 
 F "fraction"
-  = left:R right:("/" R)+ { return over([left].concat(terms(right))); }
+  = left:R _ right:("/" _ R)+ { return over([left].concat(terms(right))); }
   / R
 
 R "factor"
   = I
-  / sign:("-"/"+")? "(" expression:E ")" { 
+  / sign:("-"/"+")? _ "(" _ expression:E _ ")" { 
     var r = exp(expression);
     return sign==='-'?minus(r):r; 
   }
 
 I "integer"
-  = sign:("-"/"+")? digits:[0-9]+ { return num(parseInt((sign||"")+digits.join(""), 10)); }
+  = sign:("-"/"+")? _ digits:[0-9]+ { return num(parseInt((sign||"")+digits.join(""), 10)); }
+
+_ "white-space"
+  = [ \t\r\n]*
