@@ -116,7 +116,7 @@ describe "Parser:", ->
 
   describe "render", ->
 
-    render = (e, result) -> Parser.parse(e).render(result)
+    render = (e, o) -> Parser.parse(e).render(o)
 
     it "renders as AsciiMath, * becomes xx", ->
       expect(render '2+3*4').toBe '2+3xx4'
@@ -147,3 +147,6 @@ describe "Parser:", ->
       expect(render '1/(1-1)').toEqual '1/(1-1)'
       expect(render '1/0').toEqual '1/0'
 
+    it "render with result, simple and mixed fractions", ->
+      expect(render '1/8 + 2/8', {result: yes}).toBe '1/8+2/8=3/8'
+      expect(render '7/8 + 2/8', {result: yes}).toBe '7/8+2/8=9/8=1 1/8'

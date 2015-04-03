@@ -77,11 +77,11 @@ gulp.task 'connect', ->
     .on 'listening', -> console.log 'Started connect web server on http://localhost:9000'
 
 gulp.task 'watch', ['connect'], ->
-  gulp.watch ['app/scripts/**/*.js', 'app/scripts/**/*.pegjs'], ['scripts']
+  gulp.watch ['app/scripts/**/*.coffee', 'app/scripts/**/*.js', 'app/scripts/**/*.peg'], ['scripts']
   gulp.watch ['app/*.html', 'app/styles/**/*.css'], ['html']
 
   $.livereload.listen()
-  gulp.watch ['dist/*.html', 'dist/styles/**/*.css', 'dist/scripts/**/*.js']
+  gulp.watch ['dist/*.html', 'dist/styles/**/*.css', 'dist/scripts/**/*.coffee', 'dist/scripts/**/*.js']
     .on 'change', $.livereload.changed
 
 gulp.task 'serve', ['watch'], ->

@@ -38,7 +38,7 @@ tryParseExpressionWithError = (exp, error) ->
   aNumberWasAdded = false
 
   # if it ends with a non-number, see if adding a number works
-  if newExp.match(/\D+$/)
+  if newExp.match /\D+$/
     newExp += '1'
     aNumberWasAdded = true
 
@@ -47,7 +47,7 @@ tryParseExpressionWithError = (exp, error) ->
   closeParens = (newExp.match(/\)/g) or []).length
   newExp += ')' while openParens-- > closeParens
 
-  return parse(newExp, aNumberWasAdded) if exp != newExp
+  return parse newExp, aNumberWasAdded if exp != newExp
 
   # couldn't "fix" the expression
   { error: error.message }
@@ -89,7 +89,7 @@ calc = (ast) ->
 
 # render AST as AsciiMath
 placeholder = ''
-render = (ast, result) ->
+render = (ast, options) ->
   interpret ast,
     missing: -> placeholder
     nil: -> ''
@@ -107,16 +107,20 @@ render = (ast, result) ->
     exp: (e, recur) -> "(#{recur(e)})"
     post: (s) ->
       s = s.replace(/\+-/g, '-').replace(/--/g, '+')
-      if result?.error?
-        s += ' = bb"' + result.error + '"'
-      else if result?
-        s += " = #{result}"
+      if options?.result
+        result = calc(ast)
+        if result.error?
+          s += '=bb"' + result.error + '"'
+        else
+          s += "=#{result}"
+          mixed = result.toMixedString()
+          s += "=#{mixed}" if mixed != result.toString()
       s
 
 class Parsed
   constructor: (@ast) ->
   calc: -> calc @ast
-  render: (result) -> render @ast, result
+  render: (options) -> render @ast, options
 
 module.exports = {
   parse: (e) -> new Parsed parse e

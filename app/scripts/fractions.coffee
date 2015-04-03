@@ -22,6 +22,8 @@ fraction = (n, d) -> new Fraction n, d
 
 Fraction.create = (n, d) -> fraction n, d
 
+Fraction.mixed = (w, n, d) -> fraction n + w * d, d
+
 Fraction.add = (l, r) ->
   [a, b, c, d] = [l.n, l.d, r.n, r.d]
   fraction a*d + c*b, b*d
@@ -39,7 +41,15 @@ Fraction.div = (l, r) ->
   fraction a*d, b*c
 
 Fraction.prototype =
-  toFloat: () -> @n / @d
-  toString: () -> if @d is 1 then "#{@n}" else "#{@n}/#{@d}"
+  toFloat: -> @n / @d
+  toString: -> if @d is 1 then "#{@n}" else "#{@n}/#{@d}"
+  isProper: -> @n < @d
+  toMixedString: ->
+    if this.isProper()
+      this.toString()
+    else if @n % @d is 0
+      "#{@n // @d}"
+    else
+      "#{@n // @d} #{@n % @d}/#{@d}"
 
 module.exports = Fraction

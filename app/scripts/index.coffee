@@ -37,8 +37,8 @@ $ ->
     exp = $input.val()
     return butFirstClear() if !exp.trim()
     parsed = Parser.parse exp
+    output parsed.render {result: yes}
     result = parsed.calc()
-    output parsed.render result
     if !result.error
       $decimal.text result.toFloat()
       $input.val last = result.toString()
