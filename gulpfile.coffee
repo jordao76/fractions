@@ -1,3 +1,5 @@
+# coffeelint: disable=max_line_length
+
 gulp = require 'gulp'
 $ = (require 'gulp-load-plugins')()
 
@@ -7,13 +9,14 @@ gulp.task 'peg', ->
     .pipe gulp.dest 'app/scripts'
 
 gulp.task 'lint', ->
-  gulp.src 'app/scripts/**/*.coffee'
+  gulp.src ['./gulpfile.coffee', 'app/scripts/**/*.coffee']
     .pipe $.coffeelint()
     .pipe $.coffeelint.reporter()
 
+# TODO: the test task ends the gulp build! so it cannot run before other tasks!
 gulp.task 'test', ['peg'], ->
   gulp.src 'app/specs/**.coffee'
-    .pipe $.jasmine()
+    .pipe $.jasmine verbose: false
 
 gulp.task 'scripts', ['peg'], ->
   browserify = require 'browserify'
@@ -21,7 +24,7 @@ gulp.task 'scripts', ['peg'], ->
   buffer = require 'vinyl-buffer'
   coffeeify = require 'coffeeify'
 
-  browserify {entries: ['./app/scripts/index.coffee'], extensions: ['.coffee'], debug: true}
+  browserify entries: ['./app/scripts/index.coffee'], extensions: ['.coffee'], debug: true
     .transform(coffeeify)
     .bundle()
     .pipe source 'main.min.js'
@@ -49,11 +52,11 @@ gulp.task 'extras', ->
   gulp.src ['app/*.*', '!app/*.html']
     .pipe gulp.dest 'dist'
 
-gulp.task 'build', ['lint', 'test', 'scripts', 'images', 'html', 'extras'], ->
+gulp.task 'build', ['lint', 'scripts', 'images', 'html', 'extras'], ->
   gulp.src 'dist/**/*'
-    .pipe $.size {title: 'build', gzip: true}
+    .pipe $.size title: 'build', gzip: true
 
-gulp.task 'clean', 
+gulp.task 'clean',
   require 'del'
     .bind null, ['dist', 'app/scripts/*.js']
 
@@ -63,13 +66,12 @@ gulp.task 'default', ['clean'], ->
 # serve
 
 gulp.task 'connect', ->
+  connect = require 'connect'
   serveStatic = require 'serve-static'
-  app = (require 'connect')()
-    .use (require 'connect-livereload') {port: 35729}
+  app = connect()
+    .use (require 'connect-livereload') port: 35729
     .use serveStatic 'dist'
-    # paths to bower_components should be relative to the current file
-    # e.g. in app/index.html use ../bower_components
-    .use '/bower_components', serveStatic 'bower_components'
+    .use '/bower_components', serveStatic './bower_components'
 
   require 'http'
     .createServer app
@@ -86,3 +88,22 @@ gulp.task 'watch', ['connect'], ->
 
 gulp.task 'serve', ['watch'], ->
   (require 'opn') 'http://localhost:9000'
+
+# deploy
+
+gulp.task 'cdnize', ['build'], ->
+  gulp.src 'dist/index.html'
+    .pipe $.cdnizer [
+      file: '/bower_components/MathJax/MathJax.js?config=AM_HTMLorMML-full'
+      package: 'MathJax'
+      cdn: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full'
+    ,
+      file: '/bower_components/jquery/dist/jquery.min.js'
+      package: 'jquery'
+      cdn: 'http://code.jquery.com/jquery-${ version }.min.js'
+    ]
+    .pipe gulp.dest './dist'
+
+gulp.task 'deploy', ['cdnize'], ->
+  gulp.src 'dist/**/*'
+    .pipe $.ghPages()
