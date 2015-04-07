@@ -2,23 +2,41 @@
 
 gulp = require 'gulp'
 $ = (require 'gulp-load-plugins')()
+run = require 'run-sequence'
+
+onError = (error) ->
+  $.util.log error
+  process.exit 1 # note: shouldn't exit on a live-reload/watch environment
+
+(->
+  # disable Jasmine's built-in ExitCodeReporter, which exits the build even when successful
+  # (found this by looking at the source code of gulp-jasmine and jasmine)
+  Jasmine = require 'gulp-jasmine/node_modules/jasmine'
+  ExitCodeReporter = require 'gulp-jasmine/node_modules/jasmine/lib/reporters/exit_code_reporter'
+  addReporter = Jasmine::addReporter
+  Jasmine::addReporter = (reporter) ->
+    addReporter.call this, reporter unless reporter.constructor is ExitCodeReporter
+)()
+
+# build
 
 gulp.task 'peg', ->
-  gulp.src 'app/scripts/fractions-peg-parser.peg'
-    .pipe $.peg().on 'error', console.error
+  gulp.src './app/scripts/fractions-peg-parser.peg'
+    .pipe $.peg()
+    .on 'error', onError
     .pipe gulp.dest 'app/scripts'
 
 gulp.task 'lint', ->
-  gulp.src ['./gulpfile.coffee', 'app/scripts/**/*.coffee']
+  gulp.src ['./gulpfile.coffee', './app/**/*.coffee']
     .pipe $.coffeelint()
     .pipe $.coffeelint.reporter()
+    .pipe $.coffeelint.reporter 'failOnWarning'
 
-# TODO: the test task ends the gulp build! so it cannot run before other tasks!
-gulp.task 'test', ['peg'], ->
+gulp.task 'test', ['peg', 'lint'], ->
   gulp.src 'app/specs/**.coffee'
     .pipe $.jasmine verbose: false
 
-gulp.task 'scripts', ['peg'], ->
+gulp.task 'scripts', ['test'], ->
   browserify = require 'browserify'
   source = require 'vinyl-source-stream'
   buffer = require 'vinyl-buffer'
@@ -48,24 +66,22 @@ gulp.task 'html', ->
     .pipe $.if '*.html', $.minifyHtml conditionals: true
     .pipe gulp.dest 'dist'
 
-gulp.task 'extras', ->
+gulp.task 'extras', -> # currently only for robots.txt
   gulp.src ['app/*.*', '!app/*.html']
     .pipe gulp.dest 'dist'
-
-gulp.task 'build', ['lint', 'scripts', 'images', 'html', 'extras'], ->
-  gulp.src 'dist/**/*'
-    .pipe $.size title: 'build', gzip: true
 
 gulp.task 'clean',
   require 'del'
     .bind null, ['dist', 'app/scripts/*.js']
 
-gulp.task 'default', ['clean'], ->
-  gulp.start 'build'
+gulp.task 'build', (done) ->
+  run 'clean', ['scripts', 'images', 'html', 'extras'], done
+
+gulp.task 'default', ['build']
 
 # serve
 
-gulp.task 'connect', ->
+gulp.task 'connect', ['build'], ->
   connect = require 'connect'
   serveStatic = require 'serve-static'
   app = connect()
@@ -76,10 +92,10 @@ gulp.task 'connect', ->
   require 'http'
     .createServer app
     .listen 9000
-    .on 'listening', -> console.log 'Started connect web server on http://localhost:9000'
+    .on 'listening', -> $.util.log 'Started connect web server on http://localhost:9000'
 
 gulp.task 'watch', ['connect'], ->
-  gulp.watch ['app/scripts/**/*.coffee', 'app/scripts/**/*.js', 'app/scripts/**/*.peg'], ['scripts']
+  gulp.watch ['app/**/*.{coffee,js,peg}'], ['scripts']
   gulp.watch ['app/*.html', 'app/styles/**/*.css'], ['html']
 
   $.livereload.listen()
@@ -94,13 +110,16 @@ gulp.task 'serve', ['watch'], ->
 gulp.task 'cdnize', ['build'], ->
   gulp.src 'dist/index.html'
     .pipe $.cdnizer [
-      file: '/bower_components/MathJax/MathJax.js?config=AM_HTMLorMML-full'
-      package: 'MathJax'
-      cdn: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full'
-    ,
-      file: '/bower_components/jquery/dist/jquery.min.js'
-      package: 'jquery'
-      cdn: 'http://code.jquery.com/jquery-${ version }.min.js'
+      {
+        file: '/bower_components/MathJax/MathJax.js?config=AM_HTMLorMML-full'
+        package: 'MathJax'
+        cdn: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full'
+      }
+      {
+        file: '/bower_components/jquery/dist/jquery.min.js'
+        package: 'jquery'
+        cdn: 'http://code.jquery.com/jquery-${ version }.min.js'
+      }
     ]
     .pipe gulp.dest './dist'
 

@@ -2,7 +2,7 @@
 
 gcd = (n, d) ->
   remainder = 0
-  while (d isnt 0)
+  until d is 0
     remainder = n % d
     n = d
     d = remainder
@@ -10,13 +10,25 @@ gcd = (n, d) ->
 
 div0 = new Error 'Division by zero!'
 
-Fraction = (n, d) ->
-  throw div0 if d is 0
-  d ?= 1
-  [n, d] = [-n, -d] if d < 0
-  div = gcd n, d
-  @n = n / div
-  @d = d / div
+class Fraction
+
+  constructor: (n, d = 1) ->
+    throw div0 if d is 0
+    [n, d] = [-n, -d] if d < 0
+    div = gcd n, d
+    @n = n / div
+    @d = d / div
+
+  isProper: -> @n < @d
+  toFloat: -> @n / @d
+  toString: -> if @d is 1 then "#{@n}" else "#{@n}/#{@d}"
+  toMixedString: ->
+    if @isProper()
+      @toString()
+    else if @n % @d is 0
+      "#{@n // @d}"
+    else
+      "#{@n // @d} #{@n % @d}/#{@d}"
 
 fraction = (n, d) -> new Fraction n, d
 
@@ -39,17 +51,5 @@ Fraction.mul = (l, r) ->
 Fraction.div = (l, r) ->
   [a, b, c, d] = [l.n, l.d, r.n, r.d]
   fraction a*d, b*c
-
-Fraction.prototype =
-  toFloat: -> @n / @d
-  toString: -> if @d is 1 then "#{@n}" else "#{@n}/#{@d}"
-  isProper: -> @n < @d
-  toMixedString: ->
-    if this.isProper()
-      this.toString()
-    else if @n % @d is 0
-      "#{@n // @d}"
-    else
-      "#{@n // @d} #{@n % @d}/#{@d}"
 
 module.exports = Fraction

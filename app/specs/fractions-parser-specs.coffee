@@ -1,3 +1,5 @@
+# coffeelint: disable=max_line_length
+
 Parser = require '../scripts/fractions-parser'
 
 describe "Parser:", ->

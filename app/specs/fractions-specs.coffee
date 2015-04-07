@@ -1,3 +1,5 @@
+# coffeelint: disable=max_line_length
+
 Fraction = require '../scripts/fractions'
 
 describe "A fraction:", ->
