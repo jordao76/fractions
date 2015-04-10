@@ -1,11 +1,11 @@
 ### global module ###
 
 gcd = (n, d) ->
-  remainder = 0
+  r = 0
   until d is 0
-    remainder = n % d
+    r = n % d
     n = d
-    d = remainder
+    d = r
   Math.abs n
 
 div0 = new Error 'Division by zero!'
@@ -34,7 +34,7 @@ fraction = (n, d) -> new Fraction n, d
 
 Fraction.create = (n, d) -> fraction n, d
 
-Fraction.mixed = (w, n, d) -> fraction n + w * d, d
+Fraction.mixed = (w, n, d) -> fraction n + w*d, d
 
 Fraction.add = (l, r) ->
   [a, b, c, d] = [l.n, l.d, r.n, r.d]

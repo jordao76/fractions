@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="">
+<html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="Fraction Calculator">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <title>Fraction Calculator</title>
+
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- build:css styles/main.min.css -->
     <link rel="stylesheet" href="styles/main.css">
@@ -12,17 +14,54 @@
 
   </head>
   <body>
-    <!--[if lt IE 10]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
 
     <div id="buffer"></div>
     <div id="parsed"></div>
+    <div id="decimal"></div>
 
-    <input id="input" type="text" />
-    <div>
-      <div id="output"></div>
-      <div id="decimal"><div>
+    <div class="container" style="width: 70rem !important;">
+
+      <!--[if lt IE 10]>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+
+      <div class="row">
+        <div id="output"></div>
+      </div>
+      <div class="row">
+        <input id="input" type="text" class=".form-control" placeholder="0" />
+      </div>
+      <div class="row">
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">(</div>
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">)</div>
+        <div class="btn btn-lg btn-warning col-lg-3 col-xs-3">x / y</div>
+        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3">C</div> <!-- C means "clear" -->
+      </div>
+      <div class="row">
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">7</div>
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">8</div>
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">9</div>
+        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">÷</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">4</div>
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">5</div>
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">6</div>
+        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">×</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">1</div>
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">2</div>
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">3</div>
+        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">-</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">0</div>
+        <div class="col-lg-3 col-xs-3"></div>
+        <div class="btn btn-lg btn-success col-lg-3 col-xs-3 symbol">=</div>
+        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">+</div>
+      </div>
+
     </div>
 
     <script>
@@ -35,13 +74,13 @@
     </script>
 
     <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      showProcessingMessages: false,
-      messageStyle: "none",
-      skipStartupTypeset: true,
-      showMathMenu: false,
-      showMathMenuMSIE: false
-    });
+      MathJax.Hub.Config({
+        showProcessingMessages: false,
+        messageStyle: "none",
+        skipStartupTypeset: true,
+        showMathMenu: false,
+        showMathMenuMSIE: false
+      });
     </script>
     <script type="text/javascript" src="/bower_components/MathJax/MathJax.js?config=AM_HTMLorMML-full"></script>
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>

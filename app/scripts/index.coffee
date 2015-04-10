@@ -1,7 +1,16 @@
 ### global MathJax,jQuery,require ###
+# coffeelint: disable=max_line_length
 
 $ = jQuery
 Parser = require './fractions-parser'
+
+# splices a string
+splice = (str, index, count, add = '') ->
+  str.slice(0, index) + add + str.slice(index + count)
+
+# adds a value to a textbox DOM element, respecting any current selections and the cursor position
+addValue = (e, add) ->
+  e.value = splice e.value, e.selectionStart, e.selectionEnd - e.selectionStart, add
 
 $ ->
   $input = $ '#input'
@@ -37,13 +46,27 @@ $ ->
     exp = $input.val()
     return butFirstClear() if !exp.trim()
     parsed = Parser.parse exp
-    output parsed.render {result: yes}
+    output parsed.render result: yes
     result = parsed.calc()
     if !result.error
       $decimal.text result.toFloat()
       $input.val last = result.toString()
+    $input.focus()
 
   $input
     .keyup (e) -> calc() if e.which == 13 # <ENTER>
     .on 'input propertychange', process
     .focus()
+
+  $buttons = $ '.btn'
+  $buttons.click (e) ->
+    key = $(this).text()
+    switch key
+      when 'C' then $input.val key = '' # C means "clear"
+      when 'x / y', '÷' then key = '/'
+      when '×' then key = '*'
+    if key is '=' then calc()
+    else
+      addValue $input.get(0), key
+      process()
+    $input.focus()

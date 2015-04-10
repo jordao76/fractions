@@ -120,6 +120,11 @@ gulp.task 'cdnize', ['build'], ->
         package: 'jquery'
         cdn: 'http://code.jquery.com/jquery-${ version }.min.js'
       }
+      {
+        file: '/bower_components/bootstrap/dist/css/bootstrap.min.css'
+        package: 'bootstrap'
+        cdn: 'https://maxcdn.bootstrapcdn.com/bootstrap/${ version }/css/bootstrap.min.css'
+      }
     ]
     .pipe gulp.dest './dist'
 
