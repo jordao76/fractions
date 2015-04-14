@@ -5,6 +5,7 @@ parser = require './fractions-peg-parser'
 
 addMissingType = (ast) ->
   # replace last number with a 'missing' type
+  ast.incomplete = true # mark the ast as incomplete
 
   recur = (o) ->
     if o.arg

@@ -66,15 +66,18 @@ describe "Parser:", ->
 
     it "missing term should partially parse", ->
       expect(parse '2/').toEqual
+        incomplete: true
         type: 'over'
         arg: [
           { type: 'num', arg: 2 }
           { type: 'missing' }
         ]
       expect(parse '(').toEqual
+        incomplete: true
         type: 'exp'
         arg: { type: 'missing' }
       expect(parse '-').toEqual
+        incomplete: true
         type: 'minus'
         arg: { type: 'missing' }
 
