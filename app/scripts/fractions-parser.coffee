@@ -93,7 +93,7 @@ render = (ast, options) ->
   interpret ast,
     missing: -> placeholder
     nil: -> ''
-    error: -> 'bb"Error"'
+    error: (e) -> ['', error: e]
     num: (n) -> "#{n}"
     add: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p}+#{e}"
     minus: (e, recur) -> "-#{recur(e)}"
@@ -109,13 +109,11 @@ render = (ast, options) ->
       s = s.replace(/\+-/g, '-').replace(/--/g, '+')
       if options?.result
         result = calc(ast)
-        if result.error?
-          s += '=bb"' + result.error + '"'
-        else
-          s += "=#{result}"
+        if !result.error
+          s += "=#{result}" if s != result.toString()
           mixed = result.toMixedString()
           s += "=#{mixed}" if mixed != result.toString()
-      s
+      [s, result]
 
 class Parsed
   constructor: (@ast) ->

@@ -17,9 +17,8 @@
 
     <div id="buffer"></div>
     <div id="parsed"></div>
-    <div id="decimal"></div>
 
-    <div class="container" style="width: 70rem !important;">
+    <div id="calculator" class="container" style="width: 70rem !important;" tabindex="-1"> <!-- the tabindex makes the div focusable -->
 
       <!--[if lt IE 10]>
         <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -27,27 +26,25 @@
 
       <div class="row">
         <div id="output"></div>
-      </div>
-      <div class="row">
-        <input id="input" type="text" class=".form-control" placeholder="0" />
+        <div id="decimal"></div>
       </div>
       <div class="row">
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">(</div>
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">)</div>
-        <div class="btn btn-lg btn-warning col-lg-3 col-xs-3">x / y</div>
+        <div class="btn btn-lg btn-warning col-lg-3 col-xs-3" data-symbol="/"><sup>x</sup>&frasl;<sub>y</sub></div>
         <div class="btn btn-lg btn-primary col-lg-3 col-xs-3">C</div> <!-- C means "clear" -->
       </div>
       <div class="row">
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">7</div>
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">8</div>
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">9</div>
-        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">÷</div>
+        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol" data-symbol="/">÷</div>
       </div>
       <div class="row">
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">4</div>
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">5</div>
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">6</div>
-        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">×</div>
+        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol" data-symbol="*">×</div>
       </div>
       <div class="row">
         <div class="btn btn-lg btn-default col-lg-3 col-xs-3">1</div>

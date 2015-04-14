@@ -31,9 +31,9 @@ F "fraction"
 
 R "factor"
   = I
-  / sign:("-"/"+")? _ "(" _ expression:E _ ")" { 
+  / sign:("-"/"+")? _ "(" _ expression:E _ ")" {
     var r = exp(expression);
-    return sign==='-'?minus(r):r; 
+    return sign==='-'?minus(r):r;
   }
 
 I "integer"

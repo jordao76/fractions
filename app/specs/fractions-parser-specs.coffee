@@ -4,7 +4,7 @@ Parser = require '../scripts/fractions-parser'
 
 describe "Parser:", ->
 
-  describe "parse", ->
+  describe "parse ast", ->
 
     parse = (e) -> Parser.parse(e).ast
 
@@ -118,7 +118,8 @@ describe "Parser:", ->
 
   describe "render", ->
 
-    render = (e, o) -> Parser.parse(e).render(o)
+    render = (e, o) -> Parser.parse(e).render(o)[0]
+    render_get_error = (e, o) -> Parser.parse(e).render(o)[1].error
 
     it "renders as AsciiMath, * becomes xx", ->
       expect(render '2+3*4').toBe '2+3xx4'
@@ -143,7 +144,8 @@ describe "Parser:", ->
       expect(render '(').toBe "(#{ph})"
 
     it "bad input should render as error", ->
-      expect(render '123bad').toEqual 'bb"Error"'
+      expect(render_get_error '123bad').toEqual 'Expected end of input but "b" found.'
+      expect(render_get_error '').toEqual 'Expected expression but end of input found.'
 
     it "division by zero should render", ->
       expect(render '1/(1-1)').toEqual '1/(1-1)'
@@ -152,3 +154,6 @@ describe "Parser:", ->
     it "render with result, simple and mixed fractions", ->
       expect(render '1/8 + 2/8', result: yes).toBe '1/8+2/8=3/8'
       expect(render '7/8 + 2/8', result: yes).toBe '7/8+2/8=9/8=1 1/8'
+      expect(render '9/8', result: yes).toBe '9/8=1 1/8'
+      expect(render '1/8', result: yes).toBe '1/8' # the result is the same
+      expect(render '4/8', result: yes).toBe '4/8=1/2'

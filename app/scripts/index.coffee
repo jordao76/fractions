@@ -4,20 +4,26 @@
 $ = jQuery
 Parser = require './fractions-parser'
 
-# splices a string
-splice = (str, index, count, add = '') ->
-  str.slice(0, index) + add + str.slice(index + count)
-
-# adds a value to a textbox DOM element, respecting any current selections and the cursor position
-addValue = (e, add) ->
-  e.value = splice e.value, e.selectionStart, e.selectionEnd - e.selectionStart, add
-
 $ ->
-  $input = $ '#input'
   $output = $ '#output'
-  $buffer = $ '#buffer'
-  $parsed = $ '#parsed'
-  $decimal = $ '#decimal'
+  $input = $ '<input type=text/>' # buffer for input
+  $buffer = $ '#buffer' # buffer for MathJax
+  $parsed = $ '#parsed' # for debugging
+  $decimal = $ '#decimal' # for debugging
+  $calculator = $ '#calculator'
+
+  input = (key) ->
+    $input.val(key = '') if key is 'C' # C means "clear"
+    if key is '='
+      calc()
+    else
+      $input.val $input.val() + key
+      process()
+
+  uninput = ->
+    value = $input.val()
+    $input.val value[0...-1] # trim last element
+    process()
 
   output = (s) ->
     MathJax.Hub.Queue ->
@@ -38,35 +44,45 @@ $ ->
     return butFirstClear() if !exp.trim()
     if exp != last
       parsed = Parser.parse exp
-      output parsed.render()
-      $decimal.text ''
-      last = exp
+      if parsed.ast.error?
+        uninput()
+      else
+        output parsed.render()[0]
+        $decimal.text ''
+        last = exp
 
   calc = ->
     exp = $input.val()
     return butFirstClear() if !exp.trim()
     parsed = Parser.parse exp
-    output parsed.render result: yes
-    result = parsed.calc()
+    [rendered, result] = parsed.render result: yes
     if !result.error
+      output rendered
       $decimal.text result.toFloat()
       $input.val last = result.toString()
-    $input.focus()
+    else
+      alert result.error
 
-  $input
-    .keyup (e) -> calc() if e.which == 13 # <ENTER>
-    .on 'input propertychange', process
-    .focus()
+  # buttons
+
+  getKey = ($b) -> $b.data('symbol') or $b.text()
 
   $buttons = $ '.btn'
-  $buttons.click (e) ->
-    key = $(this).text()
-    switch key
-      when 'C' then $input.val key = '' # C means "clear"
-      when 'x / y', '÷' then key = '/'
-      when '×' then key = '*'
-    if key is '=' then calc()
-    else
-      addValue $input.get(0), key
-      process()
-    $input.focus()
+  charCodes = $buttons.map -> (getKey $(this)).charCodeAt 0
+
+  $calculator
+    .keypress (e) ->
+      key = (String.fromCharCode e.which).toUpperCase()
+      keyCode = key.charCodeAt 0
+      if (charCodes.index keyCode) isnt -1
+        input key
+      else if e.which is 13 # <ENTER>
+        calc()
+    .keydown (e) ->
+      if e.which is 8 # <BACKSPACE>
+        uninput()
+        e.preventDefault() # don't allow back navigation
+
+  $buttons.click -> input getKey $(this)
+
+  $calculator.focus()
