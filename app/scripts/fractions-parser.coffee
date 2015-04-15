@@ -23,11 +23,12 @@ addMissingType = (ast) ->
     last.type = 'missing'
     delete last.arg
 
-parse = (exp, aNumberWasAdded) ->
+parse = (exp, aNumberWasAdded = false, numParensAdded = 0) ->
   exp = exp.trim()
   try
     ast = parser.parse(exp)
     addMissingType ast if aNumberWasAdded
+    ast.numParensAdded = numParensAdded if numParensAdded > 0
     ast
   catch error
     tryParseExpressionWithError(exp, error)
@@ -46,9 +47,10 @@ tryParseExpressionWithError = (exp, error) ->
   # balance close parenthesis
   openParens = (newExp.match(/\(/g) or []).length
   closeParens = (newExp.match(/\)/g) or []).length
+  numParensAdded = openParens - closeParens
   newExp += ')' while openParens-- > closeParens
 
-  return parse newExp, aNumberWasAdded if exp != newExp
+  return parse newExp, aNumberWasAdded, numParensAdded if exp != newExp
 
   # couldn't "fix" the expression
   { error: error.message }

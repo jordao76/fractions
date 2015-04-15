@@ -64,6 +64,15 @@ describe "Parser:", ->
           { type: 'over', arg: [ { type: 'num', arg: 3 }, { type: 'num', arg: 4 } ] }
         ]
 
+    it "mismatched parentheses are balanced", ->
+      expect(parse '2+(3').toEqual
+        numParensAdded: 1
+        type: 'add'
+        arg: [
+          { type: 'num', arg: 2 }
+          { type: 'exp', arg: { type: 'num', arg: 3 } }
+        ]
+
     it "missing term should partially parse", ->
       expect(parse '2/').toEqual
         incomplete: true
@@ -74,6 +83,7 @@ describe "Parser:", ->
         ]
       expect(parse '(').toEqual
         incomplete: true
+        numParensAdded: 1
         type: 'exp'
         arg: { type: 'missing' }
       expect(parse '-').toEqual
@@ -146,7 +156,7 @@ describe "Parser:", ->
       expect(render '2+(3*(4/(').toBe "2+(3xx(4/(#{ph})))"
       expect(render '(').toBe "(#{ph})"
 
-    it "bad input should render as error", ->
+    it "bad input should return error on render", ->
       expect(render_get_error '123bad').toEqual 'Expected end of input but "b" found.'
       expect(render_get_error '').toEqual 'Expected expression but end of input found.'
 
