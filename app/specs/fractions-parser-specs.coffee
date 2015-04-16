@@ -117,22 +117,20 @@ describe "Parser:", ->
 
     it "missing term gives error", ->
       message = 'incomplete expression'
-      expect(calc '2/').toEqual {error: message}
-      expect(calc '2/(').toEqual {error: message}
-      expect(calc '2+(3*(4/(').toEqual {error: message}
-      expect(calc '(').toEqual {error: message}
+      expect(calc '2/').toEqual error: message
+      expect(calc '2/(').toEqual error: message
+      expect(calc '2+(3*(4/(').toEqual error: message
+      expect(calc '(').toEqual error: message
 
     it "bad input should not calculate", ->
       expect(calc '123bad').toEqual ''
 
     it "division by zero should not calculate", ->
-      expect(calc '1/(1-1)').toEqual
-        error: 'Division by zero!'
+      expect(calc '1/(1-1)').toEqual error: 'Division by zero!'
 
   describe "render", ->
 
-    render = (e, o) -> Parser.parse(e).render(o)[0]
-    render_get_error = (e, o) -> Parser.parse(e).render(o)[1].error
+    render = (e, o) -> Parser.parse(e).render(o)
 
     it "renders as AsciiMath, * becomes xx", ->
       expect(render '2+3*4').toBe '2+3xx4'
@@ -157,8 +155,8 @@ describe "Parser:", ->
       expect(render '(').toBe "(#{ph})"
 
     it "bad input should return error on render", ->
-      expect(render_get_error '123bad').toEqual 'Expected end of input but "b" found.'
-      expect(render_get_error '').toEqual 'Expected expression but end of input found.'
+      expect(render '123bad').toEqual error: 'Expected end of input but "b" found.'
+      expect(render '').toEqual error: 'Expected expression but end of input found.'
 
     it "division by zero should render", ->
       expect(render '1/(1-1)').toEqual '1/(1-1)'
@@ -168,5 +166,9 @@ describe "Parser:", ->
       expect(render '1/8 + 2/8', result: yes).toBe '1/8+2/8=3/8'
       expect(render '7/8 + 2/8', result: yes).toBe '7/8+2/8=9/8=1 1/8'
       expect(render '9/8', result: yes).toBe '9/8=1 1/8'
-      expect(render '1/8', result: yes).toBe '1/8' # the result is the same
+      expect(render '1/8', result: yes).toBe '1/8'
       expect(render '4/8', result: yes).toBe '4/8=1/2'
+
+    it "render with result, errors", ->
+      expect(render '4/0', result: yes).toEqual error: 'Division by zero!'
+      expect(render '4/', result: yes).toEqual error: 'incomplete expression'

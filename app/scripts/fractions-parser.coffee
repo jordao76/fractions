@@ -56,7 +56,7 @@ tryParseExpressionWithError = (exp, error) ->
   { error: error.message }
 
 interpret = (ast, interpreter) ->
-  return interpreter.nil() if !ast?
+  return null if !ast
   return interpreter.error ast.error if ast.error?
   recur = (o) -> interpreter[o.type] o.arg, recur
   interpreter.post recur ast
@@ -67,7 +67,6 @@ calc = (ast) ->
     f = fraction
     interpret ast,
       missing: -> throw new Error('incomplete expression')
-      nil: -> ''
       error: -> ''
       num: (n) -> f.create n
       add: (a, recur) -> a.map(recur).reduce (p, e) -> f.add p, e
@@ -90,13 +89,21 @@ calc = (ast) ->
   catch e
     { error: e.message }
 
-# render AST as AsciiMath
 placeholder = ''
+# render AST as AsciiMath
 render = (ast, options) ->
+
+  withResult = (s) ->
+    result = calc(ast)
+    return error: result.error if result.error?
+    s += "=#{result}" if s != result.toString()
+    mixed = result.toMixedString()
+    s += "=#{mixed}" if mixed != result.toString()
+    s
+
   interpret ast,
     missing: -> placeholder
-    nil: -> ''
-    error: (e) -> ['', error: e]
+    error: (e) -> error: e
     num: (n) -> "#{n}"
     add: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p}+#{e}"
     minus: (e, recur) -> "-#{recur(e)}"
@@ -110,13 +117,7 @@ render = (ast, options) ->
     exp: (e, recur) -> "(#{recur(e)})"
     post: (s) ->
       s = s.replace(/\+-/g, '-').replace(/--/g, '+')
-      if options?.result
-        result = calc(ast)
-        if !result.error
-          s += "=#{result}" if s != result.toString()
-          mixed = result.toMixedString()
-          s += "=#{mixed}" if mixed != result.toString()
-      [s, result]
+      if options?.result then withResult s else s
 
 class Parsed
   constructor: (@ast) ->

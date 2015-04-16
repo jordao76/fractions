@@ -1,80 +1,25 @@
 ### global MathJax,jQuery,require ###
-# coffeelint: disable=max_line_length
 
 $ = jQuery
-Parser = require './fractions-parser'
 
 $ ->
+  $calculator = $ '#calculator'
   $output = $ '#output'
-  $input = $ '<input type=text/>' # buffer for input
+  $decimal = $ '#decimal'
   $buffer = $ '#buffer' # buffer for MathJax
   $parsed = $ '#parsed' # for debugging
-  $decimal = $ '#decimal' # for debugging
-  $calculator = $ '#calculator'
 
-  input = (key) ->
-    $input.val(key = '') if key is 'C' # "clear"
-    if key is '='
-      calc()
-    else
-      $input.val $input.val() + key
-      process()
-
-  checkInput = (key) ->
-    return true if key is 'C' # "clear"
-    if key is '='
-      exp = $input.val()
-      parsed = Parser.parse exp
-      !parsed.ast.error and !parsed.ast.incomplete
-    else
-      exp = $input.val() + key
-      return true if !exp.trim()
-      parsed = Parser.parse exp
-      !parsed.ast.error
-
-  uninput = ->
-    value = $input.val()
-    $input.val value[0...-1] # trim last element
-    process()
-
-  output = (s) ->
+  output = (asciiMath, decimal = '') ->
+    $decimal.text decimal
     MathJax.Hub.Queue ->
-      $parsed.text s
-      $buffer.text "`#{s}`"
+      $parsed.text asciiMath
+      $buffer.text "`#{asciiMath}`"
       MathJax.Hub.Typeset $buffer.get(), ->
-        $output.html $buffer.html() if $parsed.text() == s
+        $output.html $buffer.html() if $parsed.text() == asciiMath
 
-  last = null
-
-  butFirstClear = ->
-    $decimal.text ''
-    output ''
-    last = ''
-
-  process = ->
-    exp = $input.val()
-    return butFirstClear() if !exp.trim()
-    if exp != last
-      parsed = Parser.parse exp
-      if parsed.ast.error?
-        uninput()
-      else
-        output parsed.render()[0]
-        $decimal.text ''
-        last = exp
-
-  calc = ->
-    exp = $input.val()
-    return butFirstClear() if !exp.trim()
-    parsed = Parser.parse exp
-    return if parsed.ast.incomplete
-    [rendered, result] = parsed.render result: yes
-    if !result.error
-      output rendered
-      $decimal.text result.toFloat()
-      $input.val last = result.toString()
-    else
-      alert result.error
+  calculator = (require './calculator')
+    output: output
+    onError: (s) -> alert s
 
   getKey = ($b) -> $b.data('symbol') or $b.text()
 
@@ -90,21 +35,21 @@ $ ->
           (String.fromCharCode e.which).toUpperCase()
       keyCode = key.charCodeAt 0
       if (charCodes.index keyCode) isnt -1
-        input key
+        calculator.input key
         toggleButtons()
     .keydown (e) ->
       if e.which is 8 # <BACKSPACE>
-        uninput()
+        calculator.uninput()
         toggleButtons()
-        e.preventDefault() # don't allow back navigation
+        e.preventDefault() # don't allow back navigation with <BACKSPACE>
 
   $buttons.click ->
-    input getKey $(this)
+    calculator.input getKey $(this)
     toggleButtons()
 
   toggleButtons = ->
     $buttons.each ->
-      if checkInput getKey $(this)
+      if calculator.canInput getKey $(this)
         this.removeAttribute 'disabled'
       else
         this.setAttribute 'disabled', true
