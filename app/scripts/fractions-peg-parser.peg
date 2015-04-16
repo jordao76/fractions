@@ -3,13 +3,14 @@
   function add(a){return {type:'add',arg:a};}
   function mul(a){return {type:'mul',arg:a};}
   function over(a){return {type:'over',arg:a};}
+  function mixed(a){return {type:'mixed',arg:a};}
   function exp(e){return {type:'exp',arg:e};}
 
   function minus(e){return {type:"minus",arg:e};}
 
   function terms(a) {
     return a.map(function(e) {
-      return e[0] === "-" ? minus(e[2]) : e[2];
+      return e[0] === "-" ? minus(e[1]) : e[1];
     });
   }
 }
@@ -18,26 +19,34 @@ S
   = E
 
 E "expression"
-  = left:T _ right:(("+"/"-") _ T)+ { return add([left].concat(terms(right))); }
+  = left:T right:(("+"/"-") T)+ { return add([left].concat(terms(right))); }
   / T
 
 T "term"
-  = left:F _ right:("*" _ F)+ { return mul([left].concat(terms(right))); }
+  = left:F right:("*" F)+ { return mul([left].concat(terms(right))); }
   / F
 
 F "fraction"
-  = left:R _ right:("/" _ R)+ { return over([left].concat(terms(right))); }
+  = left:R right:("/" R)+ { return over([left].concat(terms(right))); }
+  / whole:UR __ left:UR "/" right:UR { return mixed([whole, left, right]); }
   / R
 
 R "factor"
   = I
-  / sign:("-"/"+")? _ "(" _ expression:E _ ")" {
+  / sign:("-"/"+")? "(" expression:E ")" {
     var r = exp(expression);
     return sign==='-'?minus(r):r;
   }
 
 I "integer"
-  = sign:("-"/"+")? _ digits:[0-9]+ { return num(parseInt((sign||"")+digits.join(""), 10)); }
+  = sign:("-"/"+")? digits:[0-9]+ { return num(parseInt((sign||"")+digits.join(""), 10)); }
 
-_ "white-space"
-  = [ \t\r\n]*
+UR "unsigned factor"
+  = U
+  / "(" expression:E ")" { return exp(expression); }
+
+U "unsigned integer"
+  = digits:[0-9]+ { return num(parseInt(digits.join(""), 10)); }
+
+__ "required white-space"
+  = [ \t\r\n]+

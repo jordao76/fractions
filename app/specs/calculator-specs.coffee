@@ -9,78 +9,69 @@ describe "Calculator:", ->
       decimal = d
     onError: (s) -> error = s
 
-  after_input = (s) -> [calculator.input k for k in s]
-  after_uninput = -> calculator.uninput()
-  can_input = (k) -> calculator.canInput k
-  clear = -> after_input 'C' # TODO: teardown (or setup creating a new calculator)
+  afterInput = (s) -> [calculator.input k for k in s]
+  afterUninput = -> calculator.uninput()
+  canInput = (k) -> calculator.canInput k
+
+  afterEach ->
+    calculator.input 'C'
 
   it "starts with empty output", ->
     expect(output).toBe ''
     expect(decimal).toBe ''
 
   it "can take input", ->
-    after_input '1+'; expect(output).toBe '1+'
-    after_input '2/3'; expect(output).toBe '1+2/3'
-    clear()
+    afterInput '1+'; expect(output).toBe '1+'
+    afterInput '2/3'; expect(output).toBe '1+2/3'
 
   it "can take input and calculate a result", ->
-    after_input '1+1='
+    afterInput '1+1='
     expect(output).toBe '1+1=2'
     expect(decimal).toBe 2
-    clear()
 
   it "can take back input", ->
-    after_input '1+'; expect(output).toBe '1+'
-    after_uninput(); expect(output).toBe '1'
-    after_uninput(); expect(output).toBe ''
-    clear()
+    afterInput '1+'; expect(output).toBe '1+'
+    afterUninput(); expect(output).toBe '1'
+    afterUninput(); expect(output).toBe ''
 
   it "can take back input when empty", ->
-    after_uninput(); expect(output).toBe ''
-    clear()
+    afterUninput(); expect(output).toBe ''
 
   it "can chain calculations", ->
-    after_input '1+1='
-    after_input '+1='; expect(output).toBe '2+1=3'
-    clear()
+    afterInput '1+1='
+    afterInput '+1='; expect(output).toBe '2+1=3'
 
   it "clears result when chaining a number", ->
-    after_input '1+1='
-    after_input '42'; expect(output).toBe '42'
-    clear()
+    afterInput '1+1='
+    afterInput '42'; expect(output).toBe '42'
 
   it "can be cleared", ->
-    after_input '1+1=C'
+    afterInput '1+1=C'
     expect(output).toBe ''
     expect(decimal).toBe ''
 
   it "can check for valid input", ->
-    expect(can_input '/').toBe no
-    expect(can_input '1').toBe yes
-    expect(can_input '=').toBe no
-    after_input '1'
-    expect(can_input '/').toBe yes
-    expect(can_input '1').toBe yes
-    expect(can_input '=').toBe yes
-    after_input '+'
-    expect(can_input '/').toBe no
-    expect(can_input '1').toBe yes
-    expect(can_input '=').toBe no
-    clear()
+    expect(canInput '/').toBe no
+    expect(canInput '1').toBe yes
+    expect(canInput '=').toBe no
+    afterInput '1'
+    expect(canInput '/').toBe yes
+    expect(canInput '1').toBe yes
+    expect(canInput '=').toBe yes
+    afterInput '+'
+    expect(canInput '/').toBe no
+    expect(canInput '1').toBe yes
+    expect(canInput '=').toBe no
 
   it "invalid input does not register", ->
-    after_input '1+'
-    expect(can_input '=').toBe no
-    after_input '='; expect(output).toBe '1+'
-    clear()
+    afterInput '1+'
+    afterInput '='; expect(output).toBe '1+'
 
   it "bogus input does not register", ->
-    after_input '1+asdf/1'; expect(output).toBe '1+1'
-    clear()
+    afterInput '1+asdf/1'; expect(output).toBe '1+1'
 
   it "Division by zero", ->
-    after_input '1/0='
+    afterInput '1/0='
     expect(output).toBe '1/0'
     expect(decimal).toBe ''
     expect(error).toBe 'Division by zero!'
-    clear()

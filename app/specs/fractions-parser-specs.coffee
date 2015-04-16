@@ -32,14 +32,6 @@ describe "Parser:", ->
         type: 'over'
         arg: [{ type: 'num', arg: 1 }, { type: 'num', arg: 0 }]
 
-    it "can parse with spaces", ->
-      expect(parse ' 2 * 3 ').toEqual
-        type: 'mul'
-        arg: [{ type: 'num', arg: 2 }, { type: 'num', arg: 3 }]
-      expect(parse '\t2\n\t  +\n\t3 ').toEqual
-        type: 'add'
-        arg: [{ type: 'num', arg: 2 }, { type: 'num', arg: 3 }]
-
     it "can parse sub-expressions", ->
       expect(parse '2*(3+4)').toEqual
         type: 'mul'
@@ -62,6 +54,35 @@ describe "Parser:", ->
         arg: [
           { type: 'num', arg: 2 }
           { type: 'over', arg: [ { type: 'num', arg: 3 }, { type: 'num', arg: 4 } ] }
+        ]
+
+    it "can parse mixed fractions", ->
+      expect(parse '2 3/4').toEqual
+        type: 'mixed'
+        arg: [
+          { type: 'num', arg: 2 }
+          { type: 'num', arg: 3 }
+          { type: 'num', arg: 4 }
+        ]
+      expect(parse '2 3/4+5 6/7').toEqual
+        type: 'add'
+        arg: [
+          {
+            type: 'mixed'
+            arg: [
+              { type: 'num', arg: 2 }
+              { type: 'num', arg: 3 }
+              { type: 'num', arg: 4 }
+            ]
+          }
+          {
+            type: 'mixed'
+            arg: [
+              { type: 'num', arg: 5 }
+              { type: 'num', arg: 6 }
+              { type: 'num', arg: 7 }
+            ]
+          }
         ]
 
     it "mismatched parentheses are balanced", ->
@@ -90,6 +111,7 @@ describe "Parser:", ->
         incomplete: true
         type: 'minus'
         arg: { type: 'missing' }
+      # TODO: partial mixed fraction?
 
     it "bad input should not parse", ->
       expect(parse '123bad').toEqual
@@ -162,9 +184,9 @@ describe "Parser:", ->
       expect(render '1/(1-1)').toEqual '1/(1-1)'
       expect(render '1/0').toEqual '1/0'
 
-    it "render with result, simple and mixed fractions", ->
-      expect(render '1/8 + 2/8', result: yes).toBe '1/8+2/8=3/8'
-      expect(render '7/8 + 2/8', result: yes).toBe '7/8+2/8=9/8=1 1/8'
+    it "with result, simple and mixed fractions", ->
+      expect(render '1/8+2/8', result: yes).toBe '1/8+2/8=3/8'
+      expect(render '7/8+2/8', result: yes).toBe '7/8+2/8=9/8=1 1/8'
       expect(render '9/8', result: yes).toBe '9/8=1 1/8'
       expect(render '1/8', result: yes).toBe '1/8'
       expect(render '4/8', result: yes).toBe '4/8=1/2'

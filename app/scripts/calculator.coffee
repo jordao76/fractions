@@ -16,14 +16,14 @@ calculator = (options) ->
   {output, onError} = options
 
   $input =
-    isRes: false
     curr: ''
-    val: (v) ->
+    isRes: false
+    val: (v, r = false) ->
       @curr = v if v?
+      @isRes = r
       @curr
-    hasResult: (r = false) ->
-      [old, @isRes] = [@isRes, r]
-      old
+    hasResult: ->
+      @isRes
 
   # canInput :: (key::Str) -> Bool
   canInput = (key) ->
@@ -77,8 +77,7 @@ calculator = (options) ->
       result = parsed.calc()
       output rendered, result.toFloat()
       # move the result to the input
-      $input.val result.toString()
-      $input.hasResult true
+      $input.val result.toString(), true
     else
       onError rendered.error
 
