@@ -10,7 +10,15 @@
 
   function terms(a) {
     return a.map(function(e) {
-      return e[0] === "-" ? minus(e[1]) : e[1];
+      if (e[0] === "-") {
+        if (e[1].type === 'num') {
+          e[1].arg = -e[1].arg;
+        }
+        else {
+          return minus(e[1]);
+        }
+      }
+      return e[1];
     });
   }
 }

@@ -18,10 +18,7 @@ describe "Parser:", ->
         arg: [{ type: 'num', arg: 2 }, { type: 'num', arg: 3 }]
       expect(parse '2-3').toEqual
         type: 'add'
-        arg: [
-          { type: 'num', arg: 2 }
-          { type: 'minus', arg: { type: 'num', arg: 3 } }
-        ]
+        arg: [{ type: 'num', arg: 2 }, { type: 'num', arg: -3 }]
       expect(parse '1*2').toEqual
         type: 'mul'
         arg: [{ type: 'num', arg: 1 }, { type: 'num', arg: 2 }]
@@ -110,6 +107,7 @@ describe "Parser:", ->
       expect(parse '-').toEqual
         incomplete: true
         type: 'minus'
+        arg: { type: 'missing' }
       expect(parse '2 1/').toEqual
         incomplete: true
         type: 'mixed'
@@ -193,6 +191,7 @@ describe "Parser:", ->
       expect(render '(2+(3*4)/(5').toBe '(2+(3xx4)/(5))'
 
     it "missing term renders as empty", ->
+      expect(render '2-').toBe '2-'
       expect(render '2/').toBe '2/'
       expect(render '2/(').toBe '2/()'
       expect(render '2+(3*(4/(').toBe '2+(3xx(4/()))'

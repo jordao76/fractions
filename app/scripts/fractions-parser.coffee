@@ -18,7 +18,7 @@ addMissingTerm = (ast) ->
   last = recur ast
   if last.arg == -1
     last.type = 'minus'
-    delete last.arg
+    last.arg = type: 'missing'
   else
     last.type = 'missing'
     delete last.arg
