@@ -34,7 +34,7 @@ calculator = (options) ->
       !parsed.ast.error and !parsed.ast.incomplete
     else
       exp = $input.val() + key
-      return true if !exp.trim()
+      return true if !exp
       parsed = Parser.parse exp
       !parsed.ast.error
 

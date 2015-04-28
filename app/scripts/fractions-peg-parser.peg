@@ -28,7 +28,7 @@ T "term"
 
 F "fraction"
   = left:R right:("/" R)+ { return over([left].concat(terms(right))); }
-  / whole:UR __ left:UR "/" right:UR { return mixed([whole, left, right]); }
+  / whole:I " " left:U "/" right:I { return mixed([whole, left, right]); }
   / R
 
 R "factor"
@@ -41,12 +41,5 @@ R "factor"
 I "integer"
   = sign:("-"/"+")? digits:[0-9]+ { return num(parseInt((sign||"")+digits.join(""), 10)); }
 
-UR "unsigned factor"
-  = U
-  / "(" expression:E ")" { return exp(expression); }
-
 U "unsigned integer"
   = digits:[0-9]+ { return num(parseInt(digits.join(""), 10)); }
-
-__ "required white-space"
-  = [ \t\r\n]+

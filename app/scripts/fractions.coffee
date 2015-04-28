@@ -20,8 +20,11 @@ class Fraction
     @d = d / div
 
   isProper: -> @n < @d
+
   toFloat: -> @n / @d
+
   toString: -> if @d is 1 then "#{@n}" else "#{@n}/#{@d}"
+
   toMixedString: ->
     if @isProper()
       @toString()
@@ -30,26 +33,24 @@ class Fraction
     else
       "#{@n // @d} #{@n % @d}/#{@d}"
 
-fraction = (n, d) -> new Fraction n, d
+  @create: (n, d) -> new Fraction n, d
 
-Fraction.create = (n, d) -> fraction n, d
+  @mixed: (w, n, d) -> @create n + w*d, d
 
-Fraction.mixed = (w, n, d) -> fraction n + w*d, d
+  @add: (l, r) ->
+    [a, b, c, d] = [l.n, l.d, r.n, r.d]
+    @create a*d + c*b, b*d
 
-Fraction.add = (l, r) ->
-  [a, b, c, d] = [l.n, l.d, r.n, r.d]
-  fraction a*d + c*b, b*d
+  @minus = (f) ->
+    [n, d] = [f.n, f.d]
+    @create -n, d
 
-Fraction.minus = (f) ->
-  [n, d] = [f.n, f.d]
-  fraction -n, d
+  @mul = (l, r) ->
+    [a, b, c, d] = [l.n, l.d, r.n, r.d]
+    @create a*c, b*d
 
-Fraction.mul = (l, r) ->
-  [a, b, c, d] = [l.n, l.d, r.n, r.d]
-  fraction a*c, b*d
-
-Fraction.div = (l, r) ->
-  [a, b, c, d] = [l.n, l.d, r.n, r.d]
-  fraction a*d, b*c
+  @div = (l, r) ->
+    [a, b, c, d] = [l.n, l.d, r.n, r.d]
+    @create a*d, b*c
 
 module.exports = Fraction

@@ -63,6 +63,19 @@ describe "Calculator:", ->
     expect(canInput '1').toBe yes
     expect(canInput '=').toBe no
 
+  it "can check for valid input for mixed fractions", ->
+    expect(canInput ' ').toBe no
+    afterInput '1'
+    expect(canInput ' ').toBe yes
+    afterInput ' '
+    expect(canInput '2').toBe yes
+    afterInput '2'
+    expect(canInput '/').toBe yes
+    afterInput '/'
+    expect(canInput '3').toBe yes
+    afterInput '3'
+    expect(output).toBe '1 2/3'
+
   it "invalid input does not register", ->
     afterInput '1+'
     afterInput '='; expect(output).toBe '1+'

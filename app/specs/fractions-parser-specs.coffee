@@ -103,15 +103,37 @@ describe "Parser:", ->
           { type: 'missing' }
         ]
       expect(parse '(').toEqual
-        incomplete: true
         numParensAdded: 1
         type: 'exp'
+        incomplete: true
         arg: { type: 'missing' }
       expect(parse '-').toEqual
         incomplete: true
         type: 'minus'
-        arg: { type: 'missing' }
-      # TODO: partial mixed fraction?
+      expect(parse '2 1/').toEqual
+        incomplete: true
+        type: 'mixed'
+        arg: [
+          { type: 'num', arg: 2 }
+          { type: 'num', arg: 1 }
+          { type: 'missing' }
+        ]
+      expect(parse '2 1').toEqual
+        incomplete: true
+        type: 'mixed'
+        arg: [
+          { type: 'num', arg: 2 }
+          { type: 'num', arg: 1 }
+          { type: 'missing' }
+        ]
+      expect(parse '2 ').toEqual
+        incomplete: true
+        type: 'mixed'
+        arg: [
+          { type: 'num', arg: 2 }
+          { type: 'missing' }
+          { type: 'missing' }
+        ]
 
     it "bad input should not parse", ->
       expect(parse '123bad').toEqual
@@ -125,6 +147,7 @@ describe "Parser:", ->
     it "calculates", ->
       expect(calc_s '2+3*4').toBe '14'
       expect(calc_s '2+3*(4-5)/6').toBe '3/2'
+      expect(calc_s '6 5/7').toBe '47/7'
 
     it "fractions are calculated by pair, with one pair divided by the next", ->
       expect(calc_s '2/3/4').toBe '1/6'
@@ -169,12 +192,13 @@ describe "Parser:", ->
       expect(render '2+(3*(4/(5').toBe '2+(3xx(4/(5)))'
       expect(render '(2+(3*4)/(5').toBe '(2+(3xx4)/(5))'
 
-    it "missing term renders as a place-holder", ->
-      ph = Parser.placeholder
-      expect(render '2/').toBe "2/#{ph}"
-      expect(render '2/(').toBe "2/(#{ph})"
-      expect(render '2+(3*(4/(').toBe "2+(3xx(4/(#{ph})))"
-      expect(render '(').toBe "(#{ph})"
+    it "missing term renders as empty", ->
+      expect(render '2/').toBe '2/'
+      expect(render '2/(').toBe '2/()'
+      expect(render '2+(3*(4/(').toBe '2+(3xx(4/()))'
+      expect(render '(').toBe '()'
+      expect(render '2 ').toBe '2 /'
+      expect(render '2 1').toBe '2 1/'
 
     it "bad input should return error on render", ->
       expect(render '123bad').toEqual error: 'Expected end of input but "b" found.'
