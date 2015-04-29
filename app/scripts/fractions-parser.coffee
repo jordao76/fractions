@@ -3,26 +3,6 @@
 fraction = require './fractions'
 parser = require './fractions-peg-parser'
 
-addMissingTerm = (ast) ->
-  recur = (o) ->
-    if o.arg
-      if o.arg.length
-        if o.arg[o.arg.length - 1].type is 'missing'
-          return recur o.arg[o.arg.length - 2]
-        else
-          return recur o.arg[o.arg.length - 1]
-      else if o.type isnt 'num'
-        return recur o.arg
-    o
-
-  last = recur ast
-  if last.arg == -1
-    last.type = 'minus'
-    last.arg = type: 'missing'
-  else
-    last.type = 'missing'
-    delete last.arg
-
 parse = (exp) ->
   try
     parser.parse exp
@@ -30,6 +10,25 @@ parse = (exp) ->
     tryParseAsIncompleteExpression exp, error
 
 tryParseAsIncompleteExpression = (exp, error) ->
+
+  addMissingTerm = (ast) ->
+    recur = (o) ->
+      if o.arg
+        if o.arg.length
+          if o.arg[o.arg.length - 1].type is 'missing'
+            return recur o.arg[o.arg.length - 2]
+          else
+            return recur o.arg[o.arg.length - 1]
+        else if o.type isnt 'num'
+          return recur o.arg
+      o
+    last = recur ast
+    if last.arg is -1
+      last.type = 'minus'
+      last.arg = type: 'missing'
+    else
+      last.type = 'missing'
+      delete last.arg
 
   # try to create a valid expression
   newExp = exp
@@ -48,8 +47,8 @@ tryParseAsIncompleteExpression = (exp, error) ->
   numParensAdded = openParens - closeParens
   newExp += ')' while openParens-- > closeParens
 
-  if numParensAdded is 0 and termsAdded is 0
     # mixed numbers
+  if numParensAdded is 0 and termsAdded is 0
     # if it ends with a number, see if adding a denominator works
     if newExp.match /\d$/
       newExp += '/1'
@@ -80,7 +79,7 @@ interpret = (ast, interpreter) ->
 over = (a, recur, outer, inner) ->
   # do pair-wise association,
   # e.g. "1 / 2 / 3 / 4 / 5" => "(1 `inner` 2) `outer` (3 `inner` 4) `outer` 5"
-  return inner recur(a[0]), recur(a[1]) if a.length == 2
+  return inner recur(a[0]), recur(a[1]) if a.length is 2
   pairs = a.map(recur).reduce ((p, e) ->
     last = p[p.length - 1]
     if last.length < 2 then last.push e else p.push [e]
@@ -103,7 +102,9 @@ calc = (ast) ->
         add: (a, recur) -> a.map(recur).reduce (p, e) -> f.add p, e
         minus: (e, recur) -> f.minus recur e
         mul: (a, recur) -> a.map(recur).reduce (p, e) -> f.mul p, e
-        mixed: (a, recur) -> f.mixed a[0].arg, a[1].arg, a[2].arg
+        mixed: (a, recur) ->
+          [w, x, y] = a.map (e) -> (recur e).n
+          f.mixed w, x, y
         over: (a, recur) ->
           div = (l, r) -> f.div l, r or f.create(1)
           over a, recur, div, div
@@ -132,11 +133,13 @@ render = (ast, options) ->
     add: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} + #{e}"
     minus: (e, recur) -> "-#{recur(e)}"
     mul: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} \\times #{e}"
-    mixed: (a, recur) -> "#{recur a[0]} \\frac{#{recur a[1]}}{#{recur a[2]}}"
+    mixed: (a, recur) ->
+      [w, x, y] = a.map recur
+      "#{w} \\frac{#{x or '\\Box'}}{#{y or '\\Box'}}"
     over: (a, recur) ->
       over a, recur,
         (l, r) -> "#{l} \\div #{r}",
-        (l, r) -> if r? then "\\frac{#{l}}{#{r}}" else l
+        (l, r) -> if r? then "\\frac{#{l}}{#{r or '\\Box'}}" else l
     exp: (e, recur) -> "\\Big( #{recur(e)} \\Big)"
     post: (s) ->
       s = s

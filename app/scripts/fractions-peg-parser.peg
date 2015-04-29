@@ -5,7 +5,6 @@
   function over(a){return {type:'over',arg:a};}
   function mixed(a){return {type:'mixed',arg:a};}
   function exp(e){return {type:'exp',arg:e};}
-
   function minus(e){return {type:"minus",arg:e};}
 
   function terms(a) {
