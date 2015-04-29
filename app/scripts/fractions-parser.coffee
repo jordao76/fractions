@@ -126,6 +126,16 @@ render = (ast, options) ->
     ret += " = #{m}" if m isnt r and m isnt s
     ret
 
+  dimAddedParens = (s) ->
+    if ast.numParensAdded > 0
+      n = ast.numParensAdded
+      l = '\\Big'.length
+      i = s.length
+      while n-- > 0
+        i = s.lastIndexOf '\\Big', i - 1
+        s = [s[0...i]..., '\\color{gray}{\\Big)}', s[i+l+1...]].join ''
+    s
+
   interpret ast,
     error: (e) -> error: e
     missing: -> ''
@@ -146,7 +156,10 @@ render = (ast, options) ->
         .replace /\+(\s)?-/g, '-$1'
         .replace /-(\s)?-/g, '+$1'
         .replace /\s{2,}/g, ' '
-      if options?.result then withResult s else s
+      if options?.result
+        withResult s
+      else
+        dimAddedParens s
 
 class Parsed
   constructor: (@ast) ->
