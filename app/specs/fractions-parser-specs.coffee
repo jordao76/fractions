@@ -175,27 +175,27 @@ describe "Parser:", ->
 
     render = (e, o) -> Parser.parse(e).render(o)
 
-    it "renders as TeX, * becomes \\times", ->
+    it "renders as TeX", ->
       expect(render '2+3*4').toBe '2 + 3 \\times 4'
-      expect(render '2+3*(4-5)/6').toBe '2 + 3 \\times \\frac{( 4 - 5 )}{6}'
+      expect(render '2+3*(4-5)/6').toBe '2 + 3 \\times \\frac{\\Big( 4 - 5 \\Big)}{6}'
 
     it "fractions are matched by pair, with one pair divided by the next with \\div", ->
       expect(render '2/3/4/5').toBe '\\frac{2}{3} \\div \\frac{4}{5}'
       expect(render '2/3/4').toBe '\\frac{2}{3} \\div 4'
-      expect(render '2/(3/4)/5').toBe '\\frac{2}{( \\frac{3}{4} )} \\div 5'
+      expect(render '2/(3/4)/5').toBe '\\frac{2}{\\Big( \\frac{3}{4} \\Big)} \\div 5'
       expect(render '2*3/4/5').toBe '2 \\times \\frac{3}{4} \\div 5'
 
     it "mismatched parentheses are balanced", ->
-      expect(render '2+(3*4').toBe '2 + ( 3 \\times 4 )'
-      expect(render '2+(3*(4/(5').toBe '2 + ( 3 \\times ( \\frac{4}{( 5 )} ) )'
-      expect(render '(2+(3*4)/(5').toBe '( 2 + \\frac{( 3 \\times 4 )}{( 5 )} )'
+      expect(render '2+(3*4').toBe '2 + \\Big( 3 \\times 4 \\Big)'
+      expect(render '2+(3*(4/(5').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{\\Big( 5 \\Big)} \\Big) \\Big)'
+      expect(render '(2+(3*4)/(5').toBe '\\Big( 2 + \\frac{\\Big( 3 \\times 4 \\Big)}{\\Big( 5 \\Big)} \\Big)'
 
     it "missing term renders as empty", ->
       expect(render '2-').toBe '2 - '
       expect(render '2/').toBe '\\frac{2}{}'
-      expect(render '2/(').toBe '\\frac{2}{( )}'
-      expect(render '2+(3*(4/(').toBe '2 + ( 3 \\times ( \\frac{4}{( )} ) )'
-      expect(render '(').toBe '( )'
+      expect(render '2/(').toBe '\\frac{2}{\\Big( \\Big)}'
+      expect(render '2+(3*(4/(').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{\\Big( \\Big)} \\Big) \\Big)'
+      expect(render '(').toBe '\\Big( \\Big)'
       expect(render '2 ').toBe '2 \\frac{}{}'
       expect(render '2 1').toBe '2 \\frac{1}{}'
 
@@ -204,7 +204,7 @@ describe "Parser:", ->
       expect(render '').toEqual error: 'Expected expression but end of input found.'
 
     it "division by zero should render", ->
-      expect(render '1/(1-1)').toEqual '\\frac{1}{( 1 - 1 )}'
+      expect(render '1/(1-1)').toEqual '\\frac{1}{\\Big( 1 - 1 \\Big)}'
       expect(render '1/0').toEqual '\\frac{1}{0}'
 
     it "with result, simple and mixed fractions", ->

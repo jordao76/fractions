@@ -137,7 +137,7 @@ render = (ast, options) ->
       over a, recur,
         (l, r) -> "#{l} \\div #{r}",
         (l, r) -> if r? then "\\frac{#{l}}{#{r}}" else l
-    exp: (e, recur) -> "( #{recur(e)} )"
+    exp: (e, recur) -> "\\Big( #{recur(e)} \\Big)"
     post: (s) ->
       s = s
         .replace /\+(\s)?-/g, '-$1'
