@@ -9,13 +9,17 @@ $ ->
   $buffer = $ '#buffer' # buffer for MathJax
   $parsed = $ '#parsed' # for debugging
 
-  output = (asciiMath, decimal = '') ->
+  output = (TeX, decimal = '') ->
     $decimal.text decimal
     MathJax.Hub.Queue ->
-      $parsed.text asciiMath
-      $buffer.text "`#{asciiMath}`"
+      $parsed.text TeX
+      $buffer.text "$$#{TeX}$$"
       MathJax.Hub.Typeset $buffer.get(), ->
-        $output.html $buffer.html() if $parsed.text() == asciiMath
+        $output.html $buffer.html() if $parsed.text() == TeX
+        # adjust mathjax generated styles
+        $ '.MathJax_Display'
+          .css 'margin', '0'
+          .css 'text-align', 'right'
 
   calculator = (require './calculator')
     output: output

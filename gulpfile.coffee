@@ -111,9 +111,9 @@ gulp.task 'cdnize', ['build'], ->
   gulp.src 'dist/index.html'
     .pipe $.cdnizer [
       {
-        file: '/bower_components/MathJax/MathJax.js?config=AM_HTMLorMML-full'
+        file: '/bower_components/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
         package: 'MathJax'
-        cdn: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full'
+        cdn: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
       }
       {
         file: '/bower_components/jquery/dist/jquery.min.js'

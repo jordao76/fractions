@@ -175,44 +175,45 @@ describe "Parser:", ->
 
     render = (e, o) -> Parser.parse(e).render(o)
 
-    it "renders as AsciiMath, * becomes xx", ->
-      expect(render '2+3*4').toBe '2+3xx4'
-      expect(render '2+3*(4-5)/6').toBe '2+3xx(4-5)/6'
+    it "renders as TeX, * becomes \\times", ->
+      expect(render '2+3*4').toBe '2 + 3 \\times 4'
+      expect(render '2+3*(4-5)/6').toBe '2 + 3 \\times \\frac{( 4 - 5 )}{6}'
 
-    it "fractions are matched by pair, with one pair divided by the next with the division symbol -:", ->
-      expect(render '2/3/4').toBe '2/3-:4'
-      expect(render '2/3/4/5').toBe '2/3-:4/5'
-      expect(render '2/(3/4)/5').toBe '2/(3/4)-:5'
-      expect(render '2*3/4/5').toBe '2xx3/4-:5'
+    it "fractions are matched by pair, with one pair divided by the next with \\div", ->
+      expect(render '2/3/4/5').toBe '\\frac{2}{3} \\div \\frac{4}{5}'
+      expect(render '2/3/4').toBe '\\frac{2}{3} \\div 4'
+      expect(render '2/(3/4)/5').toBe '\\frac{2}{( \\frac{3}{4} )} \\div 5'
+      expect(render '2*3/4/5').toBe '2 \\times \\frac{3}{4} \\div 5'
 
     it "mismatched parentheses are balanced", ->
-      expect(render '2+(3*4').toBe '2+(3xx4)'
-      expect(render '2+(3*(4/(5').toBe '2+(3xx(4/(5)))'
-      expect(render '(2+(3*4)/(5').toBe '(2+(3xx4)/(5))'
+      expect(render '2+(3*4').toBe '2 + ( 3 \\times 4 )'
+      expect(render '2+(3*(4/(5').toBe '2 + ( 3 \\times ( \\frac{4}{( 5 )} ) )'
+      expect(render '(2+(3*4)/(5').toBe '( 2 + \\frac{( 3 \\times 4 )}{( 5 )} )'
 
     it "missing term renders as empty", ->
-      expect(render '2-').toBe '2-'
-      expect(render '2/').toBe '2/'
-      expect(render '2/(').toBe '2/()'
-      expect(render '2+(3*(4/(').toBe '2+(3xx(4/()))'
-      expect(render '(').toBe '()'
-      expect(render '2 ').toBe '2 /'
-      expect(render '2 1').toBe '2 1/'
+      expect(render '2-').toBe '2 - '
+      expect(render '2/').toBe '\\frac{2}{}'
+      expect(render '2/(').toBe '\\frac{2}{( )}'
+      expect(render '2+(3*(4/(').toBe '2 + ( 3 \\times ( \\frac{4}{( )} ) )'
+      expect(render '(').toBe '( )'
+      expect(render '2 ').toBe '2 \\frac{}{}'
+      expect(render '2 1').toBe '2 \\frac{1}{}'
 
     it "bad input should return error on render", ->
       expect(render '123bad').toEqual error: 'Expected end of input but "b" found.'
       expect(render '').toEqual error: 'Expected expression but end of input found.'
 
     it "division by zero should render", ->
-      expect(render '1/(1-1)').toEqual '1/(1-1)'
-      expect(render '1/0').toEqual '1/0'
+      expect(render '1/(1-1)').toEqual '\\frac{1}{( 1 - 1 )}'
+      expect(render '1/0').toEqual '\\frac{1}{0}'
 
     it "with result, simple and mixed fractions", ->
-      expect(render '1/8+2/8', result: yes).toBe '1/8+2/8=3/8'
-      expect(render '7/8+2/8', result: yes).toBe '7/8+2/8=9/8=1 1/8'
-      expect(render '9/8', result: yes).toBe '9/8=1 1/8'
-      expect(render '1/8', result: yes).toBe '1/8'
-      expect(render '4/8', result: yes).toBe '4/8=1/2'
+      expect(render '1/8+2/8', result: yes).toBe '\\frac{1}{8} + \\frac{2}{8} = \\frac{3}{8}'
+      expect(render '7/8+2/8', result: yes).toBe '\\frac{7}{8} + \\frac{2}{8} = \\frac{9}{8} = 1 \\frac{1}{8}'
+      expect(render '9/8', result: yes).toBe '\\frac{9}{8} = 1 \\frac{1}{8}'
+      expect(render '1/8', result: yes).toBe '\\frac{1}{8}'
+      expect(render '4/8', result: yes).toBe '\\frac{4}{8} = \\frac{1}{2}'
+      # TODO expect(render '1 1/8', result: yes).toBe '1 \\frac{1}{8} = \\frac{9}{8}'
 
     it "render with result, errors", ->
       expect(render '4/0', result: yes).toEqual error: 'Division by zero!'

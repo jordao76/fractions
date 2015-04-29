@@ -77,6 +77,19 @@ interpret = (ast, interpreter) ->
   recur = (o) -> interpreter[o.type] o.arg, recur
   interpreter.post recur ast
 
+over = (a, recur, outer, inner) ->
+  # do pair-wise association,
+  # e.g. "1 / 2 / 3 / 4 / 5" => "(1 `inner` 2) `outer` (3 `inner` 4) `outer` 5"
+  return inner recur(a[0]), recur(a[1]) if a.length == 2
+  pairs = a.map(recur).reduce ((p, e) ->
+    last = p[p.length - 1]
+    if last.length < 2 then last.push e else p.push [e]
+    p
+  ), [[]]
+  pairs
+    .map (e) -> inner e[0], e[1]
+    .reduce (p, e) -> outer p, e
+
 # calculate AST result
 calc = (ast) ->
   if ast.incomplete?
@@ -92,50 +105,43 @@ calc = (ast) ->
         mul: (a, recur) -> a.map(recur).reduce (p, e) -> f.mul p, e
         mixed: (a, recur) -> f.mixed a[0].arg, a[1].arg, a[2].arg
         over: (a, recur) ->
-          return f.div recur(a[0]), recur(a[1]) if a.length == 2
-          # do pair-wise association,
-          # e.g. "1 / 2 / 3 / 4 / 5" => "(1 / 2) / (3 / 4) / 5"
-          pairs = a.map(recur).reduce ((p, e) ->
-            last = p[p.length - 1]
-            if last.length < 2 then last.push e else p.push [e]
-            p
-          ), [[]]
-          pairs
-            .map (e) -> f.div e[0], e[1] or f.create(1)
-            .reduce (p, e) -> f.div p, e
+          div = (l, r) -> f.div l, r or f.create(1)
+          over a, recur, div, div
         exp: (e, recur) -> recur e
         post: (r) -> r
     catch e
       { error : e.message }
 
-# render AST as AsciiMath
+# render AST as TeX
 render = (ast, options) ->
 
   withResult = (s) ->
     result = calc(ast)
     return error: result.error if result.error?
-    s += "=#{result}" if s != result.toString()
-    mixed = result.toMixedString()
-    s += "=#{mixed}" if mixed != result.toString()
+    r = render parse result.toString()
+    m = render parse result.toMixedString()
+    s += " = #{r}" if s isnt r
+    s += " = #{m}" if m isnt r
     s
 
   interpret ast,
     error: (e) -> error: e
     missing: -> ''
     num: (n) -> "#{n}"
-    add: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p}+#{e}"
+    add: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} + #{e}"
     minus: (e, recur) -> "-#{recur(e)}"
-    mul: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p}xx#{e}"
-    mixed: (a, recur) -> "#{recur a[0]} #{recur a[1]}/#{recur a[2]}"
+    mul: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} \\times #{e}"
+    mixed: (a, recur) -> "#{recur a[0]} \\frac{#{recur a[1]}}{#{recur a[2]}}"
     over: (a, recur) ->
-      # do pair-wise association,
-      # e.g. "1 / 2 / 3 / 4 / 5" => "(1 / 2) -: (3 / 4) -: 5"
-      curr = ''
-      op = -> curr = if curr == '/' then '-:' else '/'
-      a.map(recur).reduce (p, e) -> p + op() + e
-    exp: (e, recur) -> "(#{recur(e)})"
+      over a, recur,
+        (l, r) -> "#{l} \\div #{r}",
+        (l, r) -> if r? then "\\frac{#{l}}{#{r}}" else l
+    exp: (e, recur) -> "( #{recur(e)} )"
     post: (s) ->
-      s = s.replace(/\+-/g, '-').replace(/--/g, '+')
+      s = s
+        .replace /\+(\s)?-/g, '-$1'
+        .replace /-(\s)?-/g, '+$1'
+        .replace /\s{2,}/g, ' '
       if options?.result then withResult s else s
 
 class Parsed
