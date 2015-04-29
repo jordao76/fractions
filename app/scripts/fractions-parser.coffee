@@ -120,9 +120,10 @@ render = (ast, options) ->
     return error: result.error if result.error?
     r = render parse result.toString()
     m = render parse result.toMixedString()
-    s += " = #{r}" if s isnt r
-    s += " = #{m}" if m isnt r
-    s
+    ret = s
+    ret += " = #{r}" if s isnt r
+    ret += " = #{m}" if m isnt r and m isnt s
+    ret
 
   interpret ast,
     error: (e) -> error: e

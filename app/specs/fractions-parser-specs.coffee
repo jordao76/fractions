@@ -213,7 +213,7 @@ describe "Parser:", ->
       expect(render '9/8', result: yes).toBe '\\frac{9}{8} = 1 \\frac{1}{8}'
       expect(render '1/8', result: yes).toBe '\\frac{1}{8}'
       expect(render '4/8', result: yes).toBe '\\frac{4}{8} = \\frac{1}{2}'
-      # TODO expect(render '1 1/8', result: yes).toBe '1 \\frac{1}{8} = \\frac{9}{8}'
+      expect(render '1 1/8', result: yes).toBe '1 \\frac{1}{8} = \\frac{9}{8}'
 
     it "render with result, errors", ->
       expect(render '4/0', result: yes).toEqual error: 'Division by zero!'
