@@ -53,4 +53,8 @@ class Fraction
     [a, b, c, d] = [l.n, l.d, r.n, r.d]
     @create a*d, b*c
 
+  @reciprocal = (f) ->
+    [n, d] = [f.n, f.d]
+    @create d, n
+
 module.exports = Fraction

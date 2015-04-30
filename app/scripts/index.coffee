@@ -9,13 +9,13 @@ $ ->
   $buffer = $ '#buffer' # buffer for MathJax
   $parsed = $ '#parsed' # for debugging
 
-  output = (TeX, decimal = '') ->
+  output = (tex, decimal = '') ->
     $decimal.text decimal
     MathJax.Hub.Queue ->
-      $parsed.text TeX
-      $buffer.text "$$#{TeX}$$"
+      $parsed.text tex
+      $buffer.text "$$#{tex}$$"
       MathJax.Hub.Typeset $buffer.get(), ->
-        $output.html $buffer.html() if $parsed.text() == TeX
+        $output.html $buffer.html() if $parsed.text() is tex
         # adjust mathjax generated styles
         $ '.MathJax_Display'
           .css 'margin', '0'

@@ -25,6 +25,9 @@ describe "Parser:", ->
       expect(parse '1/2').toEqual
         type: 'over'
         arg: [{ type: 'num', arg: 1 }, { type: 'num', arg: 2 }]
+      expect(parse '2÷3').toEqual
+        type: 'mul'
+        arg: [{ type: 'num', arg: 2 }, { type: 'div', arg: { type: 'num', arg: 3 } }]
       expect(parse '1/0').toEqual
         type: 'over'
         arg: [{ type: 'num', arg: 1 }, { type: 'num', arg: 0 }]
@@ -46,11 +49,11 @@ describe "Parser:", ->
         ]
 
     it "fraction has preference over multiplication", ->
-      expect(parse '2*3/4').toEqual
+      expect(parse '2÷3/4').toEqual
         type: 'mul'
         arg: [
           { type: 'num', arg: 2 }
-          { type: 'over', arg: [ { type: 'num', arg: 3 }, { type: 'num', arg: 4 } ] }
+          { type: 'div', arg: { type: 'over', arg: [ { type: 'num', arg: 3 }, { type: 'num', arg: 4 } ] } }
         ]
 
     it "can parse mixed fractions", ->
@@ -136,6 +139,8 @@ describe "Parser:", ->
     it "bad input should not parse", ->
       expect(parse '123bad').toEqual
         error: 'Expected end of input but "b" found.'
+      expect(parse '2/3/4').toEqual
+        error: 'Expected end of input but "/" found.'
 
   describe "calc", ->
 
@@ -144,32 +149,27 @@ describe "Parser:", ->
 
     it "calculates", ->
       expect(calc_s '2+3*4').toBe '14'
-      expect(calc_s '2+3*(4-5)/6').toBe '3/2'
+      expect(calc_s '2+3*(4-5)-2/6').toBe '-4/3'
       expect(calc_s '6 5/7').toBe '47/7'
-
-    it "fractions are calculated by pair, with one pair divided by the next", ->
-      expect(calc_s '2/3/4').toBe '1/6'
-      expect(calc_s '2/3/4/5').toBe '5/6'
-      expect(calc_s '2/(3/4)/5').toBe '8/15'
-      expect(calc_s '2*3/4/5').toBe '3/10'
+      expect(calc_s '2÷4').toBe '1/2'
 
     it "mismatched parentheses are balanced", ->
       expect(calc_s '2+(3*4').toBe '14'
-      expect(calc_s '2+(3*(4/(5').toBe '22/5'
-      expect(calc_s '(2+(3*4)/(5').toBe '22/5'
+      expect(calc_s '2+(3*(4/5').toBe '22/5'
+      expect(calc_s '(2+(3*4/5').toBe '22/5'
 
     it "missing term gives error", ->
       message = 'incomplete expression'
       expect(calc '2/').toEqual error: message
-      expect(calc '2/(').toEqual error: message
-      expect(calc '2+(3*(4/(').toEqual error: message
+      expect(calc '2+(3*(4/').toEqual error: message
       expect(calc '(').toEqual error: message
 
     it "bad input should not calculate", ->
       expect(calc '123bad').toEqual ''
+      expect(calc '2/3/4').toBe ''
 
     it "division by zero should not calculate", ->
-      expect(calc '1/(1-1)').toEqual error: 'Division by zero!'
+      expect(calc '1/0').toEqual error: 'Division by zero!'
 
   describe "render", ->
 
@@ -177,27 +177,20 @@ describe "Parser:", ->
 
     it "renders as TeX", ->
       expect(render '2/3').toBe '\\frac{2}{3}'
+      expect(render '2÷3').toBe '2 \\div 3'
       expect(render '1 2/3').toBe '1 \\frac{2}{3}'
       expect(render '2-3').toBe '2 - 3'
       expect(render '2+3*4').toBe '2 + 3 \\times 4'
-      expect(render '2+3*(4-5)/6').toBe '2 + 3 \\times \\frac{\\Big( 4 - 5 \\Big)}{6}'
-
-    it "fractions are matched by pair, with one pair divided by the next with \\div", ->
-      expect(render '2/3/4/5').toBe '\\frac{2}{3} \\div \\frac{4}{5}'
-      expect(render '2/3/4').toBe '\\frac{2}{3} \\div 4'
-      expect(render '2/(3/4)/5').toBe '\\frac{2}{\\Big( \\frac{3}{4} \\Big)} \\div 5'
-      expect(render '2*3/4/5').toBe '2 \\times \\frac{3}{4} \\div 5'
+      expect(render '2+3*4-5/6').toBe '2 + 3 \\times 4 - \\frac{5}{6}'
 
     it "mismatched parentheses are balanced, balncing parenthesis are rendered in gray", ->
       expect(render '2+(3*4').toBe '2 + \\Big( 3 \\times 4 \\color{gray}{\\Big)}'
-      expect(render '2+(3*(4/(5').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{\\Big( 5 \\color{gray}{\\Big)}} \\color{gray}{\\Big)} \\color{gray}{\\Big)}'
-      expect(render '(2+(3*4)/(5').toBe '\\Big( 2 + \\frac{\\Big( 3 \\times 4 \\Big)}{\\Big( 5 \\color{gray}{\\Big)}} \\color{gray}{\\Big)}'
+      expect(render '2+(3*(4/5').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{5} \\color{gray}{\\Big)} \\color{gray}{\\Big)}'
 
     it "missing term renders as empty", ->
       expect(render '2-').toBe '2 - '
       expect(render '(').toBe '\\Big( \\color{gray}{\\Big)}'
-      expect(render '2/(').toBe '\\frac{2}{\\Big( \\color{gray}{\\Big)}}'
-      expect(render '2+(3*(4/(').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{\\Big( \\color{gray}{\\Big)}} \\color{gray}{\\Big)} \\color{gray}{\\Big)}'
+      expect(render '2+(3*(4/').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{\\Box} \\color{gray}{\\Big)} \\color{gray}{\\Big)}'
 
     it "missing fraction term renders as placeholder \\Box", ->
       expect(render '2/').toBe '\\frac{2}{\\Box}'
@@ -209,7 +202,6 @@ describe "Parser:", ->
       expect(render '').toEqual error: 'Expected expression but end of input found.'
 
     it "division by zero should render", ->
-      expect(render '1/(1-1)').toEqual '\\frac{1}{\\Big( 1 - 1 \\Big)}'
       expect(render '1/0').toEqual '\\frac{1}{0}'
 
     it "with result, simple and mixed fractions", ->

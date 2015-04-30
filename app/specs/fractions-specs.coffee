@@ -70,3 +70,7 @@ describe "A fraction:", ->
     expect(Fraction.mul(f(1, 2), f(1, 3))).toEqual(f(1, 6))
     expect(Fraction.div(f(1, 2), f(1, 3))).toEqual(f(3, 2))
     expect(-> Fraction.div(f(1, 2), f(0))).toThrow()
+
+  it "reciprocal", ->
+    expect(Fraction.reciprocal(f(3, 2))).toEqual(f(2, 3))
+    expect(-> Fraction.reciprocal(f(0, 2))).toThrow()

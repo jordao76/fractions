@@ -102,6 +102,7 @@ calc = (ast) ->
         add: (a, recur) -> a.map(recur).reduce (p, e) -> f.add p, e
         minus: (e, recur) -> f.minus recur e
         mul: (a, recur) -> a.map(recur).reduce (p, e) -> f.mul p, e
+        div: (e, recur) -> f.reciprocal recur e
         mixed: (a, recur) ->
           [w, x, y] = a.map (e) -> (recur e).n
           f.mixed w, x, y
@@ -143,6 +144,7 @@ render = (ast, options) ->
     add: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} + #{e}"
     minus: (e, recur) -> "-#{recur(e)}"
     mul: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} \\times #{e}"
+    div: (e, recur) -> "\\div #{recur e}"
     mixed: (a, recur) ->
       [w, x, y] = a.map recur
       "#{w} \\frac{#{x or '\\Box'}}{#{y or '\\Box'}}"
@@ -153,6 +155,7 @@ render = (ast, options) ->
     exp: (e, recur) -> "\\Big( #{recur(e)} \\Big)"
     post: (s) ->
       s = s
+        .replace /\\times \\div/g, '\\div'
         .replace /\+(\s)?-/g, '-$1'
         .replace /-(\s)?-/g, '+$1'
         .replace /\s{2,}/g, ' '

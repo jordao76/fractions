@@ -6,6 +6,7 @@
   function mixed(a){return {type:'mixed',arg:a};}
   function exp(e){return {type:'exp',arg:e};}
   function minus(e){return {type:"minus",arg:e};}
+  function div(e){return {type:"div",arg:e};}
 
   function terms(a) {
     return a.map(function(e) {
@@ -20,6 +21,15 @@
       return e[1];
     });
   }
+
+  function factors(a) {
+    return a.map(function(e) {
+      if (e[0] === "÷") {
+        return div(e[1]);
+      }
+      return e[1];
+    });
+  }
 }
 
 S
@@ -30,11 +40,11 @@ E "expression"
   / T
 
 T "term"
-  = left:F right:("*" F)+ { return mul([left].concat(terms(right))); }
+  = left:F right:(("*"/"÷") F)+ { return mul([left].concat(factors(right))); }
   / F
 
 F "fraction"
-  = left:R right:("/" R)+ { return over([left].concat(terms(right))); }
+  = left:I "/" right:I { return over([left, right]); }
   / whole:I " " left:U "/" right:I { return mixed([whole, left, right]); }
   / R
 
@@ -46,7 +56,7 @@ R "factor"
   }
 
 I "integer"
-  = sign:("-"/"+")? digits:[0-9]+ { return num(parseInt((sign||"")+digits.join(""), 10)); }
+  = sign:("-"/"+")? uint:U { return num(parseInt((sign||"")+uint.arg, 10)); }
 
 U "unsigned integer"
   = digits:[0-9]+ { return num(parseInt(digits.join(""), 10)); }
