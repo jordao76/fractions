@@ -2,11 +2,13 @@
 
 describe "Calculator:", ->
 
-  [output, decimal, error] = [null, null, null]
+  [output, decimal, numParensAdded, error] = [null, null, null, null]
   calculator = (require '../scripts/calculator')
-    output: (s, d = '') ->
+    output: (s, o) ->
       output = s
-      decimal = d
+      {decimal, numParensAdded} = o or {}
+      decimal ?= ''
+      numParensAdded ?= 0
     onError: (s) -> error = s
 
   afterInput = (s) -> [calculator.input k for k in s]
@@ -44,6 +46,16 @@ describe "Calculator:", ->
   it "clears result when chaining a number", ->
     afterInput '1+1='
     afterInput '42'; expect(output).toBe '42'
+
+  it "clears result when taking input back", ->
+    afterInput '41+1='
+    afterUninput(); expect(output).toBe ''
+    # continue typing normally
+    afterInput '62'; expect(output).toBe '62'
+    afterUninput(); expect(output).toBe '6'
+
+  it "gets number of added parenthesis", ->
+    afterInput '(('; expect(numParensAdded).toBe 2
 
   it "can be cleared", ->
     afterInput '1+1=C'

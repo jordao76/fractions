@@ -3,7 +3,7 @@
 Parser = require './fractions-parser'
 
 # (options::{
-#   output: (asciiMath::Str, decimal::Num?) -> None
+#   output: (asciiMath::Str, { decimal::Num?, numParensAdded::Num? }?) -> None
 #   onError: (message::Str) -> None
 # }) ->
 # {
@@ -19,8 +19,9 @@ calculator = (options) ->
     curr: ''
     isRes: false
     val: (v, r = false) ->
-      @curr = v if v?
-      @isRes = r
+      if v?
+        @curr = v
+        @isRes = r
       @curr
     hasResult: ->
       @isRes
@@ -52,6 +53,7 @@ calculator = (options) ->
 
   # uninput :: (None) -> None
   uninput = ->
+    return clear() if $input.hasResult()
     value = $input.val()
     $input.val value[0...-1] # trim last element
     process()
@@ -65,7 +67,8 @@ calculator = (options) ->
     if parsed.ast.error?
       uninput()
     else
-      output parsed.render()
+      output parsed.render(),
+        { numParensAdded: parsed.ast.numParensAdded or 0 }
 
   calc = ->
     exp = $input.val()
@@ -75,7 +78,7 @@ calculator = (options) ->
     rendered = parsed.render result: yes
     if !rendered.error
       result = parsed.calc()
-      output rendered, result.toFloat()
+      output rendered, { decimal: result.toFloat() }
       # move the result to the input
       $input.val result.toString(), true
     else
@@ -83,6 +86,6 @@ calculator = (options) ->
 
   clear()
 
-  { canInput: canInput, input: input, uninput: uninput }
+  {canInput, input, uninput}
 
 module.exports = calculator

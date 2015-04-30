@@ -8,7 +8,7 @@ onError = (error) ->
   $.util.log error
   process.exit 1 # note: shouldn't exit on a live-reload/watch environment
 
-(->
+do ->
   # disable Jasmine's built-in ExitCodeReporter, which exits the build even when successful
   # (found this by looking at the source code of gulp-jasmine and jasmine)
   Jasmine = require 'gulp-jasmine/node_modules/jasmine'
@@ -16,7 +16,6 @@ onError = (error) ->
   addReporter = Jasmine::addReporter
   Jasmine::addReporter = (reporter) ->
     addReporter.call this, reporter unless reporter.constructor is ExitCodeReporter
-)()
 
 # build
 

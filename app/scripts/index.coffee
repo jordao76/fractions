@@ -9,17 +9,29 @@ $ ->
   $buffer = $ '#buffer' # buffer for MathJax
   $parsed = $ '#parsed' # for debugging
 
-  output = (tex, decimal = '') ->
-    $decimal.text decimal
+  adjustCss = ->
+    # adjust mathjax generated styles
+    $ '.MathJax_Display'
+      .css 'margin', '0'
+      .css 'text-align', 'right'
+
+  adjustParens = (n) ->
+    return if n is 0
+    # gray out added closing parenthesis
+    parens = $ '#output .MathJax_Display span'
+      .filter (i, s) -> $(s).text() is ')'
+    $ parens[-n..-1]
+      .css 'color', '#cccccc'
+
+  output = (tex, options) ->
+    $decimal.text if options?.decimal? then options.decimal else ''
     MathJax.Hub.Queue ->
       $parsed.text tex
       $buffer.text "$$#{tex}$$"
       MathJax.Hub.Typeset $buffer.get(), ->
         $output.html $buffer.html() if $parsed.text() is tex
-        # adjust mathjax generated styles
-        $ '.MathJax_Display'
-          .css 'margin', '0'
-          .css 'text-align', 'right'
+        adjustCss()
+        adjustParens options?.numParensAdded or 0
 
   calculator = (require './calculator')
     output: output

@@ -127,16 +127,6 @@ render = (ast, options) ->
     ret += " = #{m}" if m isnt r and m isnt s
     ret
 
-  dimAddedParens = (s) ->
-    if ast.numParensAdded > 0
-      n = ast.numParensAdded
-      l = '\\Big'.length
-      i = s.length
-      while n-- > 0
-        i = s.lastIndexOf '\\Big', i - 1
-        s = [s[0...i]..., '\\color{gray}{\\Big)}', s[i+l+1...]].join ''
-    s
-
   interpret ast,
     error: (e) -> error: e
     missing: -> ''
@@ -152,7 +142,7 @@ render = (ast, options) ->
       over a, recur,
         (l, r) -> "#{l} \\div #{r}",
         (l, r) -> if r? then "\\frac{#{l}}{#{r or '\\Box'}}" else l
-    exp: (e, recur) -> "\\Big( #{recur(e)} \\Big)"
+    exp: (e, recur) -> "\\left( #{recur(e)} \\right)"
     post: (s) ->
       s = s
         .replace /\\times \\div/g, '\\div'
@@ -162,7 +152,7 @@ render = (ast, options) ->
       if options?.result
         withResult s
       else
-        dimAddedParens s
+        s
 
 class Parsed
   constructor: (@ast) ->

@@ -183,14 +183,10 @@ describe "Parser:", ->
       expect(render '2+3*4').toBe '2 + 3 \\times 4'
       expect(render '2+3*4-5/6').toBe '2 + 3 \\times 4 - \\frac{5}{6}'
 
-    it "mismatched parentheses are balanced, balncing parenthesis are rendered in gray", ->
-      expect(render '2+(3*4').toBe '2 + \\Big( 3 \\times 4 \\color{gray}{\\Big)}'
-      expect(render '2+(3*(4/5').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{5} \\color{gray}{\\Big)} \\color{gray}{\\Big)}'
-
     it "missing term renders as empty", ->
       expect(render '2-').toBe '2 - '
-      expect(render '(').toBe '\\Big( \\color{gray}{\\Big)}'
-      expect(render '2+(3*(4/').toBe '2 + \\Big( 3 \\times \\Big( \\frac{4}{\\Box} \\color{gray}{\\Big)} \\color{gray}{\\Big)}'
+      expect(render '(').toBe '\\left( \\right)'
+      expect(render '2+(3*(4/').toBe '2 + \\left( 3 \\times \\left( \\frac{4}{\\Box} \\right) \\right)'
 
     it "missing fraction term renders as placeholder \\Box", ->
       expect(render '2/').toBe '\\frac{2}{\\Box}'
