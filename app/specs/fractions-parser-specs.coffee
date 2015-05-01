@@ -147,6 +147,7 @@ describe "Parser:", ->
     calc_s = (e) -> calc(e).toString()
 
     it "calculates", ->
+      expect(calc_s '1+2').toBe '3'
       expect(calc_s '2+3*4').toBe '14'
       expect(calc_s '2+3*(4-5)-2/6').toBe '-4/3'
       expect(calc_s '6 5/7').toBe '47/7'

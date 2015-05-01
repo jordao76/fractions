@@ -78,21 +78,13 @@ tryParseAsIncompleteExpression = (exp, error) ->
 interpret = (ast, interpreter) ->
   return null if !ast
   return interpreter.error ast.error if ast.error?
-  recur = (o) -> interpreter[o.type] o.arg, recur
+  map = (o, f) -> if o.map? then o.map f else f o
+  recur = (o) ->
+    if o.type is 'num' or o.type is 'missing' # leaf nodes
+      interpreter[o.type] o.arg
+    else
+      interpreter[o.type] (map o.arg, recur)
   interpreter.post recur ast
-
-over = (a, recur, outer, inner) ->
-  # do pair-wise association,
-  # e.g. "1 / 2 / 3 / 4 / 5" => "(1 `inner` 2) `outer` (3 `inner` 4) `outer` 5"
-  return inner recur(a[0]), recur(a[1]) if a.length is 2
-  pairs = a.map(recur).reduce ((p, e) ->
-    last = p[p.length - 1]
-    if last.length < 2 then last.push e else p.push [e]
-    p
-  ), [[]]
-  pairs
-    .map (e) -> inner e[0], e[1]
-    .reduce (p, e) -> outer p, e
 
 # calculate AST result
 calc = (ast) ->
@@ -104,17 +96,17 @@ calc = (ast) ->
       interpret ast,
         error: -> ''
         num: (n) -> f.create n
-        add: (a, recur) -> a.map(recur).reduce (p, e) -> f.add p, e
-        minus: (e, recur) -> f.minus recur e
-        mul: (a, recur) -> a.map(recur).reduce (p, e) -> f.mul p, e
-        div: (e, recur) -> f.reciprocal recur e
-        mixed: (a, recur) ->
-          [w, x, y] = a.map (e) -> (recur e).n
-          f.mixed w, x, y
-        over: (a, recur) ->
-          div = (l, r) -> f.div l, r or f.create(1)
-          over a, recur, div, div
-        exp: (e, recur) -> recur e
+        add: (a) -> a.reduce (p, e) -> f.add p, e
+        minus: (e) -> f.minus e
+        mul: (a) -> a.reduce (p, e) -> f.mul p, e
+        div: (e) -> f.reciprocal e
+        mixed: (a) ->
+          [w, n, d] = a.map (e) -> e.n
+          f.mixed w, n, d
+        over: (a) ->
+          [n, d] = a.map (e) -> e.n
+          f.create n, d
+        exp: (e) -> e
         post: (r) -> r
     catch e
       { error : e.message }
@@ -136,18 +128,17 @@ render = (ast, options) ->
     error: (e) -> error: e
     missing: -> ''
     num: (n) -> "#{n}"
-    add: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} + #{e}"
-    minus: (e, recur) -> "-#{recur(e)}"
-    mul: (a, recur) -> a.map(recur).reduce (p, e) -> "#{p} \\times #{e}"
-    div: (e, recur) -> "\\div #{recur e}"
-    mixed: (a, recur) ->
-      [w, x, y] = a.map recur
-      "#{w} \\frac{#{x or '\\Box'}}{#{y or '\\Box'}}"
-    over: (a, recur) ->
-      over a, recur,
-        (l, r) -> "#{l} \\div #{r}",
-        (l, r) -> if r? then "\\frac{#{l}}{#{r or '\\Box'}}" else l
-    exp: (e, recur) -> "\\left( #{recur(e)} \\right)"
+    add: (a) -> a.reduce (p, e) -> "#{p} + #{e}"
+    minus: (e) -> "-#{e}"
+    mul: (a) -> a.reduce (p, e) -> "#{p} \\times #{e}"
+    div: (e) -> "\\div #{e}"
+    mixed: (a) ->
+      [w, n, d] = a
+      "#{w} \\frac{#{n or '\\Box'}}{#{d or '\\Box'}}"
+    over: (a) ->
+      [n, d] = a
+      if d? then "\\frac{#{n}}{#{d or '\\Box'}}" else n
+    exp: (e) -> "\\left( #{e} \\right)"
     post: (s) ->
       s = s
         .replace /\\times \\div/g, '\\div'
