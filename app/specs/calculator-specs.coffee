@@ -91,6 +91,12 @@ describe "Calculator:", ->
     afterInput '3'
     expect(output).toBe '1 \\frac{2}{3}'
 
+  it "can check for valid input for mixed fractions in expressions", ->
+    afterInput '(1'
+    expect(canInput ' ').toBe yes
+    afterInput ' 2/3'
+    expect(output).toBe '\\left( 1 \\frac{2}{3} \\right)'
+
   it "invalid input does not register", ->
     afterInput '1+'
     afterInput '='; expect(output).toBe '1 + '

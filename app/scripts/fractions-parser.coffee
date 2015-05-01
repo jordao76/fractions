@@ -38,30 +38,30 @@ tryParseAsIncompleteExpression = (exp, error) ->
 
   # if it ends with a non-number (except a closing parenthesis or a space),
   # see if adding a number works
-  if newExp.match /[^\d\)\s]+$/
+  if exp.match /[^\d\)\s]+$/
     newExp += '1'
     ++numbersAdded
 
+  # if it ends with a number following a space,
+  # see if adding a denominator works
+  else if exp.match /\s\d+$/
+    newExp += '/1'
+    ++symbolsAdded
+    ++numbersAdded
+
+  # if it ends with a space, see if adding a fraction works
+  else if exp.match /\s$/
+    newExp += '1/1'
+    ++symbolsAdded
+    numbersAdded += 2
+
   # balance close parenthesis
-  openParens = (newExp.match(/\(/g) or []).length
-  closeParens = (newExp.match(/\)/g) or []).length
+  openParens = (exp.match(/\(/g) or []).length
+  closeParens = (exp.match(/\)/g) or []).length
   parensAdded = openParens - closeParens
   newExp += ')' while openParens-- > closeParens
 
-    # mixed numbers
-  if parensAdded is 0 and numbersAdded is 0
-    # if it ends with a number, see if adding a denominator works
-    if newExp.match /\d$/
-      newExp += '/1'
-      ++symbolsAdded
-      ++numbersAdded
-    # if it ends with a space, see if adding a fraction works
-    if newExp.match /\s$/
-      newExp += '1/1'
-      ++symbolsAdded
-      numbersAdded += 2
-
-  if exp != newExp
+  if exp isnt newExp
     try
       ast = parser.parse newExp
       if parensAdded > 0 or symbolsAdded > 0 or numbersAdded > 0
@@ -80,7 +80,7 @@ interpret = (ast, interpreter) ->
   return interpreter.error ast.error if ast.error?
   map = (o, f) -> if o.map? then o.map f else f o
   recur = (o) ->
-    if o.type is 'num' or o.type is 'missing' # leaf nodes
+    if o.type is 'num' or o.type is 'missing' # leaf nodes, don't recur
       interpreter[o.type] o.arg
     else
       interpreter[o.type] (map o.arg, recur)
