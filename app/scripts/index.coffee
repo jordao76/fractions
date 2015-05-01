@@ -53,6 +53,8 @@ $ ->
           adjustFraction()
         else
           adjustPlaceholders()
+        # scroll left all the way
+        $('#output').scrollLeft 1000000000
 
   calculator = (require './calculator')
     output: output
