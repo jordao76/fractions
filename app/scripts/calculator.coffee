@@ -2,8 +2,11 @@
 
 Parser = require './fractions-parser'
 
+# Incomplete :: { parens::Num, numbers::Num, symbols::Num }
+# OutputInfo :: { decimal::Num?, incomplete::Incomplete? }
+
 # (options::{
-#   output: (asciiMath::Str, { decimal::Num?, numParensAdded::Num? }?) -> None
+#   output: (tex::Str, info::OutputInfo?) -> None
 #   onError: (message::Str) -> None
 # }) ->
 # {
@@ -32,7 +35,7 @@ calculator = (options) ->
     if key is '='
       exp = $input.val()
       parsed = Parser.parse exp
-      !parsed.ast.error and !parsed.ast.incomplete
+      !parsed.ast.error and !parsed.ast.incomplete?.numbers
     else
       exp = $input.val() + key
       return true if !exp
@@ -67,14 +70,14 @@ calculator = (options) ->
     if parsed.ast.error?
       uninput()
     else
-      output parsed.render(),
-        { numParensAdded: parsed.ast.numParensAdded or 0 }
+      info = incomplete: parsed.ast.incomplete if parsed.ast.incomplete?
+      output parsed.render(), info
 
   calc = ->
     exp = $input.val()
     return clear() if !exp.trim()
     parsed = Parser.parse exp
-    return if parsed.ast.incomplete
+    return if parsed.ast.incomplete?.numbers > 0
     rendered = parsed.render result: yes
     if !rendered.error
       result = parsed.calc()

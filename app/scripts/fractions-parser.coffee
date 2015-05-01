@@ -11,7 +11,7 @@ parse = (exp) ->
 
 tryParseAsIncompleteExpression = (exp, error) ->
 
-  addMissingTerm = (ast) ->
+  replaceNumberWithMissing = (ast) ->
     recur = (o) ->
       if o.arg
         if o.arg.length
@@ -33,38 +33,43 @@ tryParseAsIncompleteExpression = (exp, error) ->
   # try to create a valid expression
   newExp = exp
 
-  termsAdded = 0
+  symbolsAdded = 0
+  numbersAdded = 0
 
   # if it ends with a non-number (except a closing parenthesis or a space),
   # see if adding a number works
   if newExp.match /[^\d\)\s]+$/
     newExp += '1'
-    ++termsAdded
+    ++numbersAdded
 
   # balance close parenthesis
   openParens = (newExp.match(/\(/g) or []).length
   closeParens = (newExp.match(/\)/g) or []).length
-  numParensAdded = openParens - closeParens
+  parensAdded = openParens - closeParens
   newExp += ')' while openParens-- > closeParens
 
     # mixed numbers
-  if numParensAdded is 0 and termsAdded is 0
+  if parensAdded is 0 and numbersAdded is 0
     # if it ends with a number, see if adding a denominator works
     if newExp.match /\d$/
       newExp += '/1'
-      ++termsAdded
+      ++symbolsAdded
+      ++numbersAdded
     # if it ends with a space, see if adding a fraction works
     if newExp.match /\s$/
       newExp += '1/1'
-      termsAdded += 2
+      ++symbolsAdded
+      numbersAdded += 2
 
   if exp != newExp
     try
       ast = parser.parse newExp
-      ast.numParensAdded = numParensAdded if numParensAdded > 0
-      while termsAdded-- > 0
-        ast.incomplete = true
-        addMissingTerm ast
+      if parensAdded > 0 or symbolsAdded > 0 or numbersAdded > 0
+        ast.incomplete = {}
+        ast.incomplete.parens  = parensAdded  if parensAdded  > 0 # )s added
+        ast.incomplete.symbols = symbolsAdded if symbolsAdded > 0 # /s added
+        ast.incomplete.numbers = numbersAdded if numbersAdded > 0 # 1s added
+        replaceNumberWithMissing ast while numbersAdded-- > 0
       return ast
 
   # couldn't "fix" the expression
@@ -91,7 +96,7 @@ over = (a, recur, outer, inner) ->
 
 # calculate AST result
 calc = (ast) ->
-  if ast.incomplete?
+  if ast.incomplete?.numbers
     { error: 'incomplete expression' }
   else
     try

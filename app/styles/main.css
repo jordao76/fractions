@@ -26,6 +26,9 @@ body {
   -ms-transition: all 0.30s ease-in-out;
   -o-transition: all 0.30s ease-in-out;
 }
+.dimmed {
+  color: #cccccc
+}
 #calculator:focus #output {
   box-shadow: 0 0 5px #51cbee;
   border: 1px solid #51cbee;

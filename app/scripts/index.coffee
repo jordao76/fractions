@@ -21,17 +21,38 @@ $ ->
     parens = $ '#output .MathJax_Display span'
       .filter (i, s) -> $(s).text() is ')'
     $ parens[-n..-1]
-      .css 'color', '#cccccc'
+      .addClass 'dimmed'
 
-  output = (tex, options) ->
-    $decimal.text if options?.decimal? then options.decimal else ''
+  adjustPlaceholders = () ->
+    $ '#output .MathJax_Display span'
+      .filter (i, s) -> $(s).text() is '□' # in TeX this is \Box
+      .addClass 'dimmed'
+
+  adjustFraction = () ->
+    fraction = $ '#output .MathJax_Display span'
+      .filter (i, s) -> $(s).text() is '□' # in TeX this is \Box
+      .last()
+      .parent()
+      .parent()
+      .addClass 'dimmed'
+    fraction
+      .children "span"
+      .filter (i, s) -> $(s).text().match /\d+/
+      .css 'color', '#333' # this is normal MathJax's color
+
+  output = (tex, info) ->
+    $decimal.text if info?.decimal? then info.decimal else ''
     MathJax.Hub.Queue ->
       $parsed.text tex
       $buffer.text "$$#{tex}$$"
       MathJax.Hub.Typeset $buffer.get(), ->
         $output.html $buffer.html() if $parsed.text() is tex
         adjustCss()
-        adjustParens options?.numParensAdded or 0
+        adjustParens info?.incomplete?.parens or 0
+        if info?.incomplete?.symbols > 0
+          adjustFraction()
+        else
+          adjustPlaceholders()
 
   calculator = (require './calculator')
     output: output

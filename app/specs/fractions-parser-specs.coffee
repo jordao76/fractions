@@ -87,7 +87,7 @@ describe "Parser:", ->
 
     it "mismatched parentheses are balanced", ->
       expect(parse '2+(3').toEqual
-        numParensAdded: 1
+        incomplete: { parens: 1 }
         type: 'add'
         arg: [
           { type: 'num', arg: 2 }
@@ -96,23 +96,22 @@ describe "Parser:", ->
 
     it "missing term should partially parse", ->
       expect(parse '2/').toEqual
-        incomplete: true
+        incomplete: { numbers: 1 }
         type: 'over'
         arg: [
           { type: 'num', arg: 2 }
           { type: 'missing' }
         ]
       expect(parse '(').toEqual
-        numParensAdded: 1
+        incomplete: { parens: 1, numbers: 1 }
         type: 'exp'
-        incomplete: true
         arg: { type: 'missing' }
       expect(parse '-').toEqual
-        incomplete: true
+        incomplete: { numbers: 1 }
         type: 'minus'
         arg: { type: 'missing' }
       expect(parse '2 1/').toEqual
-        incomplete: true
+        incomplete: { numbers: 1 }
         type: 'mixed'
         arg: [
           { type: 'num', arg: 2 }
@@ -120,7 +119,7 @@ describe "Parser:", ->
           { type: 'missing' }
         ]
       expect(parse '2 1').toEqual
-        incomplete: true
+        incomplete: { numbers: 1, symbols: 1 }
         type: 'mixed'
         arg: [
           { type: 'num', arg: 2 }
@@ -128,7 +127,7 @@ describe "Parser:", ->
           { type: 'missing' }
         ]
       expect(parse '2 ').toEqual
-        incomplete: true
+        incomplete: { numbers: 2, symbols: 1 }
         type: 'mixed'
         arg: [
           { type: 'num', arg: 2 }
