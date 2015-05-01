@@ -134,10 +134,10 @@ render = (ast, options) ->
     div: (e) -> "\\div #{e}"
     mixed: (a) ->
       [w, n, d] = a
-      "#{w} \\frac{#{n or '\\Box'}}{#{d or '\\Box'}}"
+      "#{w} \\frac{#{n or '\\circ'}}{#{d or '\\circ'}}"
     over: (a) ->
       [n, d] = a
-      if d? then "\\frac{#{n}}{#{d or '\\Box'}}" else n
+      if d? then "\\frac{#{n}}{#{d or '\\circ'}}" else n
     exp: (e) -> "\\left( #{e} \\right)"
     post: (s) ->
       s = s

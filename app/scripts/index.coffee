@@ -23,14 +23,14 @@ $ ->
     $ parens[-n..-1]
       .addClass 'dimmed'
 
-  adjustPlaceholders = () ->
+  getPlaceholders = () ->
     $ '#output .MathJax_Display span'
-      .filter (i, s) -> $(s).text() is '□' # in TeX this is \Box
-      .addClass 'dimmed'
+      .filter (i, s) -> $(s).text() is '∘' # in TeX this is \circ
+
+  adjustPlaceholders = () -> getPlaceholders().addClass 'dimmed'
 
   adjustFraction = () ->
-    fraction = $ '#output .MathJax_Display span'
-      .filter (i, s) -> $(s).text() is '□' # in TeX this is \Box
+    fraction = getPlaceholders()
       .last()
       .parent()
       .parent()

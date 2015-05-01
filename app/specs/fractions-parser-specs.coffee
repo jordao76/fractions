@@ -186,12 +186,12 @@ describe "Parser:", ->
     it "missing term renders as empty", ->
       expect(render '2-').toBe '2 - '
       expect(render '(').toBe '\\left( \\right)'
-      expect(render '2+(3*(4/').toBe '2 + \\left( 3 \\times \\left( \\frac{4}{\\Box} \\right) \\right)'
+      expect(render '2+(3*(4/').toBe '2 + \\left( 3 \\times \\left( \\frac{4}{\\circ} \\right) \\right)'
 
-    it "missing fraction term renders as placeholder \\Box", ->
-      expect(render '2/').toBe '\\frac{2}{\\Box}'
-      expect(render '1 ').toBe '1 \\frac{\\Box}{\\Box}'
-      expect(render '1 1').toBe '1 \\frac{1}{\\Box}'
+    it "missing fraction term renders as placeholder \\circ", ->
+      expect(render '2/').toBe '\\frac{2}{\\circ}'
+      expect(render '1 ').toBe '1 \\frac{\\circ}{\\circ}'
+      expect(render '1 1').toBe '1 \\frac{1}{\\circ}'
 
     it "bad input should return error on render", ->
       expect(render '123bad').toEqual error: 'Expected end of input but "b" found.'
