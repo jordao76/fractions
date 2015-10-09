@@ -1,17 +1,21 @@
 body {
   background-image: url("../images/blueprint.png");
   background-repeat: repeat;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", sans-serif;
+}
+header, footer {
+  background-color: #333;
+  color: #ddd;
+  padding: 1rem;
+  text-align: center;
 }
 .browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
+  text-align: center;
 }
 #calculator {
-  /* don't allow the div calculator to show a border when focused */
-  outline: 0;
+  outline: 0; /* don't allow the div calculator to show a border when focused */
+  width: 70rem !important;
+  margin-bottom: 2.5rem;
 }
 #output {
   overflow-x: auto;
@@ -29,7 +33,7 @@ body {
   -o-transition: all 0.30s ease-in-out;
 }
 .dimmed {
-  color: #cccccc
+  color: #cccccc;
 }
 #calculator:focus #output {
   box-shadow: 0 0 5px #51cbee;
@@ -44,18 +48,23 @@ body {
   position: absolute;
   bottom: 1.55rem;
   right: 1.25rem;
+  visibility: hidden;
 }
 #parsed {
   position: absolute;
   bottom: 1.25rem;
   left: 1.25rem;
+  visibility: hidden;
 }
 .btn {
-  margin-bottom: 1rem;
   height: 7.5rem;
   font-size: 5rem;
   padding-bottom: 8rem;
+  margin-bottom: 1rem;
 }
 .symbol {
   font-size: 6rem;
+}
+.credit {
+  text-align: center;
 }

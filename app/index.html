@@ -6,6 +6,7 @@
     <meta name="description" content="Fraction Calculator">
     <title>Fraction Calculator</title>
 
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- build:css styles/main.min.css -->
@@ -15,53 +16,55 @@
   </head>
   <body>
 
+    <header>
+      <h1>F R A C T I O N • C A L C U L A T O R</h1>
+    </header>
+
     <div id="buffer"></div>
     <div id="parsed"></div>
 
-    <div id="calculator" class="container" style="width: 70rem !important;" tabindex="-1"> <!-- the tabindex makes the div focusable -->
+    <!--[if lt IE 10]>
+      <p class="browsehappy alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
 
-      <!--[if lt IE 10]>
-        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-      <![endif]-->
+    <div id="calculator" class="container" tabindex="-1"> <!-- the tabindex makes the div focusable -->
 
       <div class="row">
         <div id="output"></div>
         <div id="decimal"></div>
       </div>
       <div class="row">
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">(</div>
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">)</div>
-        <div class="btn btn-lg btn-success col-lg-3 col-xs-3 symbol">=</div>
-        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3">C</div> <!-- C means "clear" -->
+        <div class="btn btn-lg btn-default col-sm-3">(</div>
+        <div class="btn btn-lg btn-default col-sm-3">)</div>
+        <div class="btn btn-lg btn-success col-sm-3 symbol">=</div>
+        <div class="btn btn-lg btn-primary col-sm-3">C</div> <!-- C means "clear" -->
       </div>
       <div class="row">
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">7</div>
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">8</div>
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">9</div>
-        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">÷</div>
+        <div class="btn btn-lg btn-default col-sm-3">7</div>
+        <div class="btn btn-lg btn-default col-sm-3">8</div>
+        <div class="btn btn-lg btn-default col-sm-3">9</div>
+        <div class="btn btn-lg btn-primary col-sm-3 symbol">÷</div>
       </div>
       <div class="row">
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">4</div>
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">5</div>
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">6</div>
-        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol" data-symbol="*">×</div>
+        <div class="btn btn-lg btn-default col-sm-3">4</div>
+        <div class="btn btn-lg btn-default col-sm-3">5</div>
+        <div class="btn btn-lg btn-default col-sm-3">6</div>
+        <div class="btn btn-lg btn-primary col-sm-3 symbol" data-symbol="*">×</div>
       </div>
       <div class="row">
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">1</div>
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">2</div>
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">3</div>
-        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">-</div>
+        <div class="btn btn-lg btn-default col-sm-3">1</div>
+        <div class="btn btn-lg btn-default col-sm-3">2</div>
+        <div class="btn btn-lg btn-default col-sm-3">3</div>
+        <div class="btn btn-lg btn-primary col-sm-3 symbol">-</div>
       </div>
       <div class="row">
-        <div class="btn btn-lg btn-default col-lg-3 col-xs-3">0</div>
-        <div class="btn btn-lg btn-warning col-lg-3 col-xs-3" data-symbol="&#32;">W <sup>x</sup>&frasl;<sub>y</sub></div>
-        <div class="btn btn-lg btn-warning col-lg-3 col-xs-3" data-symbol="/"><sup>x</sup>&frasl;<sub>y</sub></div>
-        <div class="btn btn-lg btn-primary col-lg-3 col-xs-3 symbol">+</div>
+        <div class="btn btn-lg btn-default col-sm-3">0</div>
+        <div class="btn btn-lg btn-warning col-sm-3" data-symbol="&#32;">W <sup>x</sup>&frasl;<sub>y</sub></div>
+        <div class="btn btn-lg btn-warning col-sm-3" data-symbol="/"><sup>x</sup>&frasl;<sub>y</sub></div>
+        <div class="btn btn-lg btn-primary col-sm-3 symbol">+</div>
       </div>
 
-      <div>
-        <span>By <a href="https://github.com/jordao76">Jordão</a>. Check it out on <a href="https://github.com/jordao76/fractions">GitHub</a>.</span>
-      </div>
+      <div class="credit">By <a href="https://github.com/jordao76">Jordão</a>. Check it out on <a href="https://github.com/jordao76/fractions">GitHub</a>.</div>
 
     </div>
 

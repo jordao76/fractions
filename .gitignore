@@ -3,3 +3,4 @@ dist
 bower_components
 app/scripts/*.js
 .publish
+.DS_Store

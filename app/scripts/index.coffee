@@ -30,13 +30,12 @@ $ ->
   adjustPlaceholders = () -> getPlaceholders().addClass 'dimmed'
 
   adjustFraction = () ->
-    fraction = getPlaceholders()
+    getPlaceholders()
       .last()
       .parent()
       .parent()
       .addClass 'dimmed'
-    fraction
-      .children "span"
+      .children 'span'
       .filter (i, s) -> $(s).text().match /\d+/
       .css 'color', '#333' # this is normal MathJax's color
 
@@ -91,7 +90,7 @@ $ ->
       if calculator.canInput getKey $(this)
         this.removeAttribute 'disabled'
       else
-        this.setAttribute 'disabled', true
+        this.setAttribute 'disabled', 'disabled'
 
   toggleButtons()
   $calculator.focus()
