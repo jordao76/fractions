@@ -8,15 +8,6 @@ onError = (error) ->
   $.util.log error
   process.exit 1 # note: shouldn't exit on a live-reload/watch environment
 
-do ->
-  # disable Jasmine's built-in ExitCodeReporter, which exits the build even when successful
-  # (found this by looking at the source code of gulp-jasmine and jasmine)
-  Jasmine = require 'gulp-jasmine/node_modules/jasmine'
-  ExitCodeReporter = require 'gulp-jasmine/node_modules/jasmine/lib/reporters/exit_code_reporter'
-  addReporter = Jasmine::addReporter
-  Jasmine::addReporter = (reporter) ->
-    addReporter.call this, reporter unless reporter.constructor is ExitCodeReporter
-
 # build
 
 gulp.task 'peg', ->
@@ -56,12 +47,9 @@ gulp.task 'images', ->
     .pipe gulp.dest 'dist/images'
 
 gulp.task 'html', ->
-  assets = $.useref.assets searchPath: 'app'
   gulp.src 'app/*.html'
-    .pipe assets
     .pipe $.if '*.css', $.csso()
-    .pipe assets.restore()
-    .pipe $.useref()
+    .pipe $.useref(searchPath: 'app')
     .pipe $.if '*.html', $.minifyHtml conditionals: true
     .pipe gulp.dest 'dist'
 
@@ -112,7 +100,7 @@ gulp.task 'cdnize', ['build'], ->
       {
         file: '/bower_components/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
         package: 'MathJax'
-        cdn: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+        cdn: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/${ version }/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
       }
       {
         file: '/bower_components/jquery/dist/jquery.min.js'

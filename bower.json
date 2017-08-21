@@ -11,7 +11,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "MathJax": "~2.5.0",
+    "MathJax": "~2.7.1",
     "jquery": "~2.1.3",
     "bootstrap": "~3.3.4"
   }
