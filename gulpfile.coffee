@@ -105,7 +105,7 @@ gulp.task 'cdnize', ['build'], ->
       {
         file: '/bower_components/jquery/dist/jquery.min.js'
         package: 'jquery'
-        cdn: 'http://code.jquery.com/jquery-${ version }.min.js'
+        cdn: 'https://code.jquery.com/jquery-${ version }.min.js'
       }
       {
         file: '/bower_components/bootstrap/dist/css/bootstrap.min.css'
