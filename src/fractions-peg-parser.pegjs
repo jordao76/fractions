@@ -1,0 +1,62 @@
+{
+  function num(n){return {type:'num',arg:n};}
+  function add(a){return {type:'add',arg:a};}
+  function mul(a){return {type:'mul',arg:a};}
+  function over(a){return {type:'over',arg:a};}
+  function mixed(a){return {type:'mixed',arg:a};}
+  function exp(e){return {type:'exp',arg:e};}
+  function minus(e){return {type:"minus",arg:e};}
+  function div(e){return {type:"div",arg:e};}
+
+  function terms(a) {
+    return a.map(function(e) {
+      if (e[0] === "-") {
+        if (e[1].type === 'num') {
+          e[1].arg = -e[1].arg;
+        }
+        else {
+          return minus(e[1]);
+        }
+      }
+      return e[1];
+    });
+  }
+
+  function factors(a) {
+    return a.map(function(e) {
+      if (e[0] === "÷") {
+        return div(e[1]);
+      }
+      return e[1];
+    });
+  }
+}
+
+S
+  = E
+
+E "expression"
+  = left:T right:(("+"/"-") T)+ { return add([left].concat(terms(right))); }
+  / T
+
+T "term"
+  = left:F right:(("*"/"÷") F)+ { return mul([left].concat(factors(right))); }
+  / F
+
+F "fraction"
+  = left:I "/" right:I { return over([left, right]); }
+  / whole:I " " left:U "/" right:I { return mixed([whole, left, right]); }
+  / R
+
+R "factor"
+  = I
+  / sign:("-"/"+")? "(" expression:E ")" {
+    var r = exp(expression);
+    return sign==='-'?minus(r):r;
+  }
+
+I "integer"
+  = sign:("-"/"+")? uint:U { return num(parseInt((sign||"")+uint.arg, 10)); }
+
+U "unsigned integer"
+  = digits:[0-9]+ { return num(parseInt(digits.join(""), 10)); }

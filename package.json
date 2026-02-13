@@ -10,10 +10,11 @@
   "author": "Rodrigo Jordao <rodrigo.jordao@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "generate-parser": "peggy --format es -o src/fractions-peg-parser.js src/fractions-peg-parser.pegjs",
+    "dev": "npm run generate-parser && vite",
+    "build": "npm run generate-parser && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "npm run generate-parser && vitest run"
   },
   "devDependencies": {
     "bower": "^1.8.0",
@@ -42,6 +43,7 @@
     "karma": "^1.7.0",
     "karma-jasmine": "^1.1.0",
     "opn": "^5.1.0",
+    "peggy": "^5.0.6",
     "run-sequence": "^2.1.0",
     "serve-static": "^1.12.4",
     "vinyl-buffer": "^1.0.0",
