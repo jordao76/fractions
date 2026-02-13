@@ -1,6 +1,4 @@
 node_modules
 dist
-bower_components
-app/scripts/*.js
-.publish
+src/fractions-peg-parser.js
 .DS_Store

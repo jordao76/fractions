@@ -1,7 +1,7 @@
 {
   "name": "fractions",
   "private": true,
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "A fraction calculator",
   "keywords": [
     "fraction",
@@ -16,45 +16,12 @@
     "preview": "vite preview",
     "test": "npm run generate-parser && vitest run"
   },
-  "devDependencies": {
-    "bower": "^1.8.0",
-    "browserify": "^14.4.0",
-    "coffee-script": "^1.12.7",
-    "coffeeify": "^2.1.0",
-    "connect": "^3.6.3",
-    "connect-livereload": "^0.6.0",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-cdnizer": "^1.1.7",
-    "gulp-coffeelint": "^0.6.0",
-    "gulp-csso": "^3.0.0",
-    "gulp-gh-pages": "^0.5.4",
-    "gulp-if": "^2.0.2",
-    "gulp-jasmine": "^2.4.2",
-    "gulp-livereload": "^3.8.1",
-    "gulp-load-plugins": "^1.5.0",
-    "gulp-minify-html": "^1.0.6",
-    "gulp-peg": "^0.2.0",
-    "gulp-sourcemaps": "^2.6.1",
-    "gulp-uglify": "^3.0.0",
-    "gulp-useref": "^3.1.2",
-    "gulp-util": "^3.0.8",
-    "jasmine-core": "^2.7.0",
-    "karma": "^1.7.0",
-    "karma-jasmine": "^1.1.0",
-    "opn": "^5.1.0",
-    "peggy": "^5.0.6",
-    "run-sequence": "^2.1.0",
-    "serve-static": "^1.12.4",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "vite": "^7.3.1",
-    "vitest": "^4.0.18"
-  },
-  "overrides": {
-    "graceful-fs": "^4.2.11"
-  },
   "dependencies": {
     "katex": "^0.16.28"
+  },
+  "devDependencies": {
+    "peggy": "^5.0.6",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   }
 }
