@@ -53,5 +53,8 @@
   },
   "overrides": {
     "graceful-fs": "^4.2.11"
+  },
+  "dependencies": {
+    "katex": "^0.16.28"
   }
 }

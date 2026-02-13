@@ -5,9 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Fraction Calculator">
     <title>Fraction Calculator</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   </head>
   <body>
-    <div id="app"></div>
+
+    <header>
+      <h1>F R A C T I O N &bull; C A L C U L A T O R</h1>
+    </header>
+
+    <div id="calculator" tabindex="-1">
+
+      <div class="row">
+        <div id="output" style="grid-column: 1 / -1;"></div>
+      </div>
+      <div id="decimal" style="grid-column: 1 / -1;"></div>
+      <div class="row">
+        <div class="btn btn-default">(</div>
+        <div class="btn btn-default">)</div>
+        <div class="btn btn-success symbol">=</div>
+        <div class="btn btn-primary">C</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">7</div>
+        <div class="btn btn-default">8</div>
+        <div class="btn btn-default">9</div>
+        <div class="btn btn-primary symbol">÷</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">4</div>
+        <div class="btn btn-default">5</div>
+        <div class="btn btn-default">6</div>
+        <div class="btn btn-primary symbol" data-symbol="*">&times;</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">1</div>
+        <div class="btn btn-default">2</div>
+        <div class="btn btn-default">3</div>
+        <div class="btn btn-primary symbol">-</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">0</div>
+        <div class="btn btn-warning" data-symbol=" ">W <sup>x</sup>&frasl;<sub>y</sub></div>
+        <div class="btn btn-warning" data-symbol="/"><sup>x</sup>&frasl;<sub>y</sub></div>
+        <div class="btn btn-primary symbol">+</div>
+      </div>
+
+      <div class="credit">By <a href="https://github.com/jordao76">Jordão</a>. Check it out on <a href="https://github.com/jordao76/fractions">GitHub</a>.</div>
+
+    </div>
+
     <script type="module" src="/src/index.js"></script>
   </body>
 </html>
