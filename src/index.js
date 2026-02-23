@@ -36,7 +36,7 @@ function adjustFraction() {
     // Un-dim numeric children so only placeholder parts are dimmed
     frac.querySelectorAll('span').forEach((s) => {
       if (s.textContent.match(/\d+/)) {
-        s.style.color = '#333';
+        s.style.color = '#ece2d0';
       }
     });
   }
