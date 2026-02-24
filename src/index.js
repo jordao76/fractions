@@ -43,6 +43,7 @@ function adjustFraction() {
 }
 
 function output(tex, info) {
+  $decimal.classList.remove('error');
   $decimal.textContent = info?.decimal != null ? info.decimal : '';
   if (tex === '') {
     $output.innerHTML = '';
@@ -71,7 +72,10 @@ function output(tex, info) {
 
 const calc = calculator({
   output,
-  onError: (s) => alert(s),
+  onError: (s) => {
+    $decimal.textContent = s;
+    $decimal.classList.add('error');
+  },
 });
 
 function getKey(btn) {

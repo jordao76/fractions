@@ -12,7 +12,7 @@ describe('Calculator:', () => {
   const calc = calculator({
     output: (s, o) => {
       output = s;
-      decimal = o?.decimal || '';
+      decimal = o?.decimal ?? '';  // ?? not || so that decimal=0 is preserved
       parens = o?.incomplete?.parens || 0;
       numbers = o?.incomplete?.numbers || 0;
       symbols = o?.incomplete?.symbols || 0;
@@ -126,10 +126,39 @@ describe('Calculator:', () => {
     afterInput('1+asdf/1'); expect(output).toBe('1 + 1');
   });
 
-  it('Division by zero', () => {
+  it('Division by zero via fraction notation', () => {
     afterInput('1/0=');
     expect(output).toBe('\\frac{1}{0}');
     expect(decimal).toBe('');
     expect(error).toBe('Division by zero!');
+  });
+
+  it('Division by zero via ÷ operator', () => {
+    afterInput('1÷0=');
+    expect(error).toBe('Division by zero!');
+  });
+
+  it('Result of zero', () => {
+    afterInput('1/3-1/3=');
+    expect(output).toContain('= 0');
+    expect(decimal).toBe(0);
+  });
+
+  it('Zero divided by a number is zero', () => {
+    afterInput('0÷3=');
+    expect(output).toContain('= 0');
+    expect(decimal).toBe(0);
+  });
+
+  it('Negative result', () => {
+    afterInput('1-2=');
+    expect(output).toBe('1 - 2 = -1');
+    expect(decimal).toBe(-1);
+  });
+
+  it('Negative mixed fraction result', () => {
+    afterInput('1/3-2/3=');
+    expect(output).toContain('= \\frac{-1}{3}');
+    expect(decimal).toBeCloseTo(-1/3);
   });
 });

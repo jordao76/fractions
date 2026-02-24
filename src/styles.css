@@ -127,6 +127,10 @@ header h1 {
 }
 
 /* ───── Decimal ───── */
+#decimal.error {
+  color: var(--copper);
+}
+
 #decimal {
   width: 100%;
   height: 2rem;

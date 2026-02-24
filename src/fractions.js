@@ -20,7 +20,7 @@ export class Fraction {
   }
 
   isProper() {
-    return this.n < this.d;
+    return Math.abs(this.n) < this.d;
   }
 
   toFloat() {
@@ -37,7 +37,7 @@ export class Fraction {
     } else if (this.n % this.d === 0) {
       return `${Math.trunc(this.n / this.d)}`;
     } else {
-      return `${Math.trunc(this.n / this.d)} ${this.n % this.d}/${this.d}`;
+      return `${Math.trunc(this.n / this.d)} ${Math.abs(this.n % this.d)}/${this.d}`;
     }
   }
 
@@ -46,7 +46,9 @@ export class Fraction {
   }
 
   static mixed(w, n, d) {
-    return this.create(n + w * d, d);
+    // For negative whole parts, -2 1/3 means -(2 + 1/3) = -7/3, not (-2*3+1)/3 = -5/3
+    const sign = w < 0 ? -1 : 1;
+    return this.create(sign * (Math.abs(w) * d + n), d);
   }
 
   static add(l, r) {

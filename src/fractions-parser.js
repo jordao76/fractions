@@ -131,8 +131,8 @@ function render(ast, options) {
     const r = render(parse(result.toString()));
     const m = render(parse(result.toMixedString()));
     let ret = s;
-    if (s !== r) ret += ` = ${r}`;
-    if (m !== r && m !== s) ret += ` = ${m}`;
+    if (!r.error && s !== r) ret += ` = ${r}`;
+    if (!m.error && m !== r && m !== s) ret += ` = ${m}`;
     return ret;
   }
 

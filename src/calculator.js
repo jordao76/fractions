@@ -76,8 +76,12 @@ export default function calculator(options) {
     const rendered = parsed.render({ result: true });
     if (!rendered.error) {
       const result = parsed.calc();
-      output(rendered, { decimal: result.toFloat() });
-      $input.val(result.toString(), true);
+      if (!result.error) {
+        output(rendered, { decimal: result.toFloat() });
+        $input.val(result.toString(), true);
+      } else {
+        onError(result.error);
+      }
     } else {
       onError(rendered.error);
     }

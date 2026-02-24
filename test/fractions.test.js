@@ -84,4 +84,34 @@ describe('A fraction:', () => {
     expect(Fraction.reciprocal(f(3, 2))).toEqual(f(2, 3));
     expect(() => Fraction.reciprocal(f(0, 2))).toThrow();
   });
+
+  it('isProper works correctly for negative fractions', () => {
+    expect(f(-1, 7).isProper()).toBe(true);   // |-1| < 7
+    expect(f(-7, 3).isProper()).toBe(false);  // |-7| > 3
+    expect(f(-3, 3).isProper()).toBe(false);  // |-3| = 3, not strictly less
+  });
+
+  it('negative mixed numbers: -2 1/3 means -(2 + 1/3) = -7/3', () => {
+    expect(m(-2, 1, 3)).toEqual(f(-7, 3));
+    expect(m(-2, 1, 3).toString()).toBe('-7/3');
+  });
+
+  it('toMixedString works correctly for negative improper fractions', () => {
+    expect(f(-7, 3).isProper()).toBe(false);
+    expect(f(-7, 3).toMixedString()).toBe('-2 1/3');
+    expect(f(-14, 3).toMixedString()).toBe('-4 2/3');
+  });
+
+  it('integer overflow: denominators exceeding MAX_SAFE_INTEGER lose precision', () => {
+    // 100000001 * 100000003 = 10000000400000003 (exact, odd — not representable as double)
+    // JS rounds this to 10000000400000004, introducing a spurious GCD of 200000004
+    expect(100000001 * 100000003).toBeGreaterThan(Number.MAX_SAFE_INTEGER);
+    // The calculation completes without throwing but the result is imprecise
+    const result = Fraction.add(f(1, 100000001), f(1, 100000003));
+    expect(() => result.toFloat()).not.toThrow();
+    // Exact result would be 200000004/10000000400000003 (irreducible)
+    // Due to overflow the result incorrectly simplifies to 1/50000001
+    expect(result.n).toBe(1);
+    expect(result.d).toBe(50000001);
+  });
 });
