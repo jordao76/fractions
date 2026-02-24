@@ -1,10 +1,61 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width, initial-scale=1"><meta name=description content="Fraction Calculator"><title>Fraction Calculator</title><link href="https://fonts.googleapis.com/css?family=Open+Sans" rel=stylesheet type=text/css><link href=https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css rel=stylesheet><link rel=stylesheet href=styles/main.min.css></head><body><header><h1>F R A C T I O N • C A L C U L A T O R</h1></header><div id=buffer></div><div id=parsed></div><!--[if lt IE 10]>
- <p class="browsehappy alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
- <![endif]--><div id=calculator class=container tabindex=-1><div class=row><div id=output></div><div id=decimal></div></div><div class=row><div class="btn btn-lg btn-default col-xs-3">(</div><div class="btn btn-lg btn-default col-xs-3">)</div><div class="btn btn-lg btn-success col-xs-3 symbol">=</div><div class="btn btn-lg btn-primary col-xs-3">C</div></div><div class=row><div class="btn btn-lg btn-default col-xs-3">7</div><div class="btn btn-lg btn-default col-xs-3">8</div><div class="btn btn-lg btn-default col-xs-3">9</div><div class="btn btn-lg btn-primary col-xs-3 symbol">÷</div></div><div class=row><div class="btn btn-lg btn-default col-xs-3">4</div><div class="btn btn-lg btn-default col-xs-3">5</div><div class="btn btn-lg btn-default col-xs-3">6</div><div class="btn btn-lg btn-primary col-xs-3 symbol" data-symbol=*>×</div></div><div class=row><div class="btn btn-lg btn-default col-xs-3">1</div><div class="btn btn-lg btn-default col-xs-3">2</div><div class="btn btn-lg btn-default col-xs-3">3</div><div class="btn btn-lg btn-primary col-xs-3 symbol">-</div></div><div class=row><div class="btn btn-lg btn-default col-xs-3">0</div><div class="btn btn-lg btn-warning col-xs-3" data-symbol=&#32;>W <sup>x</sup>&frasl;<sub>y</sub></div><div class="btn btn-lg btn-warning col-xs-3" data-symbol="/"><sup>x</sup>&frasl;<sub>y</sub></div><div class="btn btn-lg btn-primary col-xs-3 symbol">+</div></div><div class=credit>By <a href=https://github.com/jordao76>Jordão</a>. Check it out on <a href=https://github.com/jordao76/fractions>GitHub</a>.</div></div><script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-      ga('create','UA-61291433-1','auto');
-      ga('send','pageview');
-    </script><script type=text/x-mathjax-config>MathJax.Hub.Config({ showProcessingMessages: false, messageStyle: "none", skipStartupTypeset: true, showMathMenu: false, showMathMenuMSIE: false });</script><script type=text/javascript src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type=text/javascript src=https://code.jquery.com/jquery-2.1.4.min.js></script><script type=text/javascript src=scripts/main.min.js></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Fraction Calculator">
+    <meta name="theme-color" content="#100f0c">
+    <link rel="apple-touch-icon" href="/fractions/apple-touch-icon.png">
+    <title>Fraction Calculator</title>
+    <script type="module" crossorigin src="/fractions/assets/index-Cg-ezuDe.js"></script>
+    <link rel="stylesheet" crossorigin href="/fractions/assets/index-BfRWHZ_y.css">
+  <link rel="manifest" href="/fractions/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/fractions/registerSW.js"></script></head>
+  <body>
+
+    <header>
+      <h1>Fraction&thinsp;&middot;&thinsp;Calculator</h1>
+    </header>
+
+    <div id="calculator" tabindex="-1">
+
+      <div class="row">
+        <div id="output" style="grid-column: 1 / -1;"></div>
+      </div>
+      <div id="decimal" style="grid-column: 1 / -1;"></div>
+      <div class="row">
+        <div class="btn btn-default">(</div>
+        <div class="btn btn-default">)</div>
+        <div class="btn btn-success symbol">=</div>
+        <div class="btn btn-primary">C</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">7</div>
+        <div class="btn btn-default">8</div>
+        <div class="btn btn-default">9</div>
+        <div class="btn btn-primary symbol">÷</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">4</div>
+        <div class="btn btn-default">5</div>
+        <div class="btn btn-default">6</div>
+        <div class="btn btn-primary symbol" data-symbol="*">&times;</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">1</div>
+        <div class="btn btn-default">2</div>
+        <div class="btn btn-default">3</div>
+        <div class="btn btn-primary symbol">-</div>
+      </div>
+      <div class="row">
+        <div class="btn btn-default">0</div>
+        <div class="btn btn-warning" data-symbol=" ">W <sup>x</sup>&frasl;<sub>y</sub></div>
+        <div class="btn btn-warning" data-symbol="/"><sup>x</sup>&frasl;<sub>y</sub></div>
+        <div class="btn btn-primary symbol">+</div>
+      </div>
+
+      <div class="credit">By <a href="https://github.com/jordao76">Jordão</a>. Check it out on <a href="https://github.com/jordao76/fractions">GitHub</a>.</div>
+
+    </div>
+
+  </body>
+</html>
