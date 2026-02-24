@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="#100f0c"/>
+  <!-- Fraction bar -->
+  <rect x="136" y="244" width="240" height="24" rx="12" fill="#c88548"/>
+  <!-- Numerator dot -->
+  <circle cx="256" cy="168" r="36" fill="#ece2d0"/>
+  <!-- Denominator dot -->
+  <circle cx="256" cy="344" r="36" fill="#ece2d0"/>
+</svg>
