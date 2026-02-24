@@ -6,6 +6,7 @@ import calculator from './calculator.js';
 const $calculator = document.getElementById('calculator');
 const $output = document.getElementById('output');
 const $decimal = document.getElementById('decimal');
+const $backspace = document.getElementById('backspace');
 const $buttons = document.querySelectorAll('.btn');
 
 function adjustParens(n) {
@@ -96,6 +97,11 @@ function toggleButtons() {
       btn.setAttribute('disabled', 'disabled');
     }
   });
+  if (calc.canUninput()) {
+    $backspace.removeAttribute('disabled');
+  } else {
+    $backspace.setAttribute('disabled', 'disabled');
+  }
 }
 
 $calculator.addEventListener('keydown', (e) => {
@@ -126,3 +132,28 @@ $buttons.forEach((btn) => {
 
 toggleButtons();
 $calculator.focus();
+
+// Backspace button click
+$backspace.addEventListener('click', () => {
+  calc.uninput();
+  toggleButtons();
+});
+
+// Swipe left on the display to delete last character
+let swipeStartX = 0, swipeStartY = 0;
+$output.addEventListener('touchstart', (e) => {
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+}, { passive: true });
+$output.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+  const dy = e.changedTouches[0].clientY - swipeStartY;
+  if (dx < -40 && Math.abs(dx) > Math.abs(dy)) {
+    calc.uninput();
+    toggleButtons();
+  }
+}, { passive: true });
+
+// Render KaTeX fraction labels into the fraction buttons
+katex.render('\\dfrac{x}{y}', document.querySelector('[data-symbol="/"]'), { throwOnError: false });
+katex.render('w\\,\\dfrac{x}{y}', document.querySelector('[data-symbol=" "]'), { throwOnError: false });

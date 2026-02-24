@@ -89,5 +89,9 @@ export default function calculator(options) {
 
   clear();
 
-  return { canInput, input, uninput };
+  function canUninput() {
+    return $input.val().length > 0;
+  }
+
+  return { canInput, input, uninput, canUninput };
 }
