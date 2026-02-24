@@ -139,20 +139,6 @@ $backspace.addEventListener('click', () => {
   toggleButtons();
 });
 
-// Swipe left on the display to delete last character
-let swipeStartX = 0, swipeStartY = 0;
-$output.addEventListener('touchstart', (e) => {
-  swipeStartX = e.touches[0].clientX;
-  swipeStartY = e.touches[0].clientY;
-}, { passive: true });
-$output.addEventListener('touchend', (e) => {
-  const dx = e.changedTouches[0].clientX - swipeStartX;
-  const dy = e.changedTouches[0].clientY - swipeStartY;
-  if (dx < -40 && Math.abs(dx) > Math.abs(dy)) {
-    calc.uninput();
-    toggleButtons();
-  }
-}, { passive: true });
 
 // Render KaTeX fraction labels into the fraction buttons
 katex.render('\\dfrac{x}{y}', document.querySelector('[data-symbol="/"]'), { throwOnError: false });
